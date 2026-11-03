@@ -380,5 +380,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 25,
   },
-  
+  workoutButton: {
+  width: 175,
+  minHeight: 44,
+  borderRadius: 14,
+  backgroundColor: '#B9F56B',
+  paddingHorizontal: 13,
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginTop: 15,
+},
+workoutButtonText: {
+  color: '#17231D',
+  fontSize: 12,
+  fontWeight: '900',
+},
+workoutButtonIcon: {
+  color: '#17231D',
+  fontSize: 18,
+  fontWeight: '800',
+},
 })
