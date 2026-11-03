@@ -1,14 +1,11 @@
 import { Stack } from 'expo-router'
-import { StyleSheet, View } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
 
-const RootLayout = () => {
+export default function RootLayout() {
   return (
-    <View>
-     </View>
-
+    <>
+      <StatusBar style="dark" />
+      <Stack screenOptions={{ headerShown: false }} />
+    </>
   )
 }
-
-export default RootLayout
-
-const styles = StyleSheet.create({})
