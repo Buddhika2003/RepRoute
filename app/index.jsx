@@ -19,6 +19,9 @@ export default function DashboardScreen() {
               <Text style={styles.brandTagline}>TRAIN WITH INTENTION</Text>
             </View>
 
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>R</Text>
+            </View>
           </View>
 
           <Text style={styles.dateLabel}>{today.toUpperCase()}</Text>
@@ -80,6 +83,18 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     letterSpacing: 1.1,
     marginTop: 3,
+  },
+  avatar: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#DDE8D5',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: {
+    color: '#18372A',
+    fontWeight: '900',
   },
   dateLabel: {
     color: '#3D702D',
