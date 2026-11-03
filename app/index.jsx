@@ -1,4 +1,5 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { router } from 'expo-router'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 
 const weeklyActivity = [
   { day: 'M', height: 0 },
@@ -116,6 +117,14 @@ export default function DashboardScreen() {
           <Text style={styles.footer}>STRONGER, ONE REP AT A TIME</Text>
         </View>
       </ScrollView>
+
+      <Pressable
+          style={styles.workoutButton}
+          onPress={() => router.push('/workout-log')}>
+
+        <Text style={styles.workoutButtonText}>Log a workout</Text>
+        <Text style={styles.workoutButtonIcon}>→</Text>
+      </Pressable>
     </View>
   )
 }
@@ -371,4 +380,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 25,
   },
+  
 })
