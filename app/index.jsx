@@ -1,6 +1,14 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 
-const weeklyActivity = []
+const weeklyActivity = [
+  { day: 'M', height: 0 },
+  { day: 'T', height: 0 },
+  { day: 'W', height: 0 },
+  { day: 'T', height: 0 },
+  { day: 'F', height: 0 },
+  { day: 'S', height: 0 },
+  { day: 'S', height: 0 },
+]
 
 function StatCard({ label, value, note }) {
   return (
@@ -63,7 +71,11 @@ export default function DashboardScreen() {
             <Text style={styles.sectionNote}>YOUR ACTIVITY</Text>
           </View>
 
-          
+          <View style={styles.statsRow}>
+            <StatCard label="Workouts" value="0" note="this week" />
+            <StatCard label="Total reps" value="0" note="this week" />
+            <StatCard label="Streak" value="0 days" note="keep going" />
+          </View>
 
           <View style={styles.sectionHeading}>
             <Text style={styles.sectionTitle}>Weekly activity</Text>
@@ -94,7 +106,11 @@ export default function DashboardScreen() {
             <View style={styles.emptyIcon}>
               <Text style={styles.emptyIconText}>+</Text>
             </View>
-            
+            <Text style={styles.emptyTitle}>Your training log starts here</Text>
+            <Text style={styles.emptyDescription}>
+              Completed workouts will appear here so you can look back at your
+              progress.
+            </Text>
           </View>
 
           <Text style={styles.footer}>STRONGER, ONE REP AT A TIME</Text>
