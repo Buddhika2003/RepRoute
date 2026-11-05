@@ -142,6 +142,43 @@ export default function WorkoutLogScreen() {
   <Text style={styles.addButtonIcon}>＋</Text>
 </Pressable>
 </View>
+<View style={styles.sectionHeading}>
+  <Text style={styles.sectionTitle}>This workout</Text>
+  <Text style={styles.sectionCount}>
+    {entries.length} exercises
+  </Text>
+</View>
+
+{entries.length === 0 ? (
+  <View style={styles.emptyCard}>
+    <Text style={styles.emptyMark}>＋</Text>
+    <Text style={styles.emptyTitle}>No exercises added yet</Text>
+    <Text style={styles.emptyText}>
+      Add your first exercise using the form above.
+    </Text>
+  </View>
+) : (
+  entries.map((entry, index) => (
+    <View key={entry.id} style={styles.entryCard}>
+      <View style={styles.entryNumber}>
+        <Text style={styles.entryNumberText}>
+          {String(index + 1).padStart(2, '0')}
+        </Text>
+      </View>
+
+      <View style={styles.entryDetails}>
+        <Text style={styles.entryName}>{entry.name}</Text>
+        <Text style={styles.entryInfo}>
+          {entry.sets} sets  ·  {entry.reps} reps  ·  {entry.weight} kg
+        </Text>
+      </View>
+    </View>
+  ))
+)}
+
+<Text style={styles.note}>
+  Your workout entries will be saved on this device in a later step.
+</Text>
       </ScrollView>
     </View>
   )
@@ -255,5 +292,89 @@ addButtonIcon: {
   color: '#17231D',
   fontSize: 19,
   fontWeight: '800',
+},
+sectionHeading: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginTop: 25,
+  marginBottom: 11,
+},
+sectionTitle: {
+  color: '#17231D',
+  fontSize: 16,
+  fontWeight: '900',
+},
+sectionCount: {
+  color: '#7E8982',
+  fontSize: 10,
+  fontWeight: '800',
+},
+emptyCard: {
+  alignItems: 'center',
+  backgroundColor: '#FFFFFF',
+  borderRadius: 20,
+  borderWidth: 1,
+  borderColor: '#E7EBE5',
+  padding: 22,
+},
+emptyMark: {
+  color: '#3D702D',
+  fontSize: 25,
+  marginBottom: 8,
+},
+emptyTitle: {
+  color: '#17231D',
+  fontSize: 13,
+  fontWeight: '900',
+},
+emptyText: {
+  color: '#7E8982',
+  fontSize: 11,
+  marginTop: 6,
+  textAlign: 'center',
+},
+entryCard: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#FFFFFF',
+  borderRadius: 17,
+  borderWidth: 1,
+  borderColor: '#E7EBE5',
+  padding: 13,
+  marginBottom: 9,
+},
+entryNumber: {
+  width: 36,
+  height: 36,
+  borderRadius: 12,
+  backgroundColor: '#E8F2DF',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginRight: 11,
+},
+entryNumberText: {
+  color: '#3D702D',
+  fontSize: 10,
+  fontWeight: '900',
+},
+entryDetails: {
+  flex: 1,
+},
+entryName: {
+  color: '#17231D',
+  fontSize: 13,
+  fontWeight: '900',
+},
+entryInfo: {
+  color: '#7E8982',
+  fontSize: 10,
+  marginTop: 5,
+},
+note: {
+  color: '#7E8982',
+  fontSize: 10,
+  textAlign: 'center',
+  marginTop: 18,
 },
 })
