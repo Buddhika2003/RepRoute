@@ -1,13 +1,21 @@
 import { router } from 'expo-router'
+import { useState } from 'react'
 import {
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  View,
+  TextInput,
+  View
 } from 'react-native'
 
 export default function WorkoutLogScreen() {
+
+    const [exercise, setExercise] = useState('')
+    const [sets, setSets] = useState('3')
+    const [reps, setReps] = useState('10')
+    const [weight, setWeight] = useState('')
+
   return (
     <View style={styles.page}>
       <ScrollView
@@ -23,6 +31,56 @@ export default function WorkoutLogScreen() {
         <Text style={styles.subtitle}>
           Record each exercise as you train.
         </Text>
+            <View style={styles.formCard}>
+  <Text style={styles.cardTitle}>Add an exercise</Text>
+
+  <Text style={styles.label}>Exercise name</Text>
+  <TextInput
+    value={exercise}
+    onChangeText={setExercise}
+    placeholder="e.g. Barbell Bench Press"
+    placeholderTextColor="#929B95"
+    style={styles.input}
+  />
+
+  <View style={styles.fieldRow}>
+    <View style={styles.fieldColumn}>
+      <Text style={styles.label}>Sets</Text>
+      <TextInput
+        value={sets}
+        onChangeText={setSets}
+        keyboardType="number-pad"
+        placeholder="3"
+        placeholderTextColor="#929B95"
+        style={styles.input}
+      />
+    </View>
+
+    <View style={styles.fieldColumn}>
+      <Text style={styles.label}>Reps</Text>
+      <TextInput
+        value={reps}
+        onChangeText={setReps}
+        keyboardType="number-pad"
+        placeholder="10"
+        placeholderTextColor="#929B95"
+        style={styles.input}
+      />
+    </View>
+
+    <View style={styles.fieldColumn}>
+      <Text style={styles.label}>Weight (kg)</Text>
+      <TextInput
+        value={weight}
+        onChangeText={setWeight}
+        keyboardType="decimal-pad"
+        placeholder="0"
+        placeholderTextColor="#929B95"
+        style={styles.input}
+      />
+    </View>
+  </View>
+</View>
       </ScrollView>
     </View>
   )
@@ -70,4 +128,41 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 22,
   },
+  formCard: {
+  backgroundColor: '#FFFFFF',
+  borderRadius: 20,
+  borderWidth: 1,
+  borderColor: '#E7EBE5',
+  padding: 16,
+},
+cardTitle: {
+  color: '#17231D',
+  fontSize: 15,
+  fontWeight: '900',
+  marginBottom: 17,
+},
+label: {
+  color: '#17231D',
+  fontSize: 11,
+  fontWeight: '800',
+  marginBottom: 7,
+},
+input: {
+  minHeight: 46,
+  borderRadius: 13,
+  borderWidth: 1,
+  borderColor: '#E7EBE5',
+  backgroundColor: '#FBFCFA',
+  paddingHorizontal: 12,
+  color: '#17231D',
+  fontSize: 13,
+  marginBottom: 14,
+},
+fieldRow: {
+  flexDirection: 'row',
+  gap: 9,
+},
+fieldColumn: {
+  flex: 1,
+},
 })
