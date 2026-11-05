@@ -15,6 +15,46 @@ export default function WorkoutLogScreen() {
     const [sets, setSets] = useState('3')
     const [reps, setReps] = useState('10')
     const [weight, setWeight] = useState('')
+    const [message, setMessage] = useState('')
+    const [entries, setEntries] = useState([])
+
+      function addExercise() {
+        const setCount = Number(sets)
+        const repCount = Number(reps)
+        const weightValue = Number(weight)
+
+        if (!exercise.trim()) {
+          setMessage('Enter an exercise name.')
+          return
+        }
+
+        if (!Number.isInteger(setCount) || setCount < 1) {
+          setMessage('Sets must be a whole number greater than zero.')
+          return
+        }
+
+        if (!Number.isInteger(repCount) || repCount < 1) {
+          setMessage('Reps must be a whole number greater than zero.')
+          return
+  }
+
+        if (!Number.isFinite(weightValue) || weightValue < 0) {
+          setMessage('Weight must be zero or greater.')
+        return
+        }
+
+        const newEntry = {
+        id: `${Date.now()}`,
+        name: exercise.trim(),
+        sets: setCount,
+        reps: repCount,
+        weight: weightValue,
+        }
+
+        setEntries((currentEntries) => [newEntry, ...currentEntries])
+        setExercise('')
+        setMessage('Exercise added to this workout.')
+      }
 
   return (
     <View style={styles.page}>
@@ -55,6 +95,7 @@ export default function WorkoutLogScreen() {
         style={styles.input}
       />
     </View>
+    
 
     <View style={styles.fieldColumn}>
       <Text style={styles.label}>Reps</Text>
@@ -80,6 +121,26 @@ export default function WorkoutLogScreen() {
       />
     </View>
   </View>
+  {!!message && (
+  <Text
+    style={[
+      styles.message,
+      message.startsWith('Enter') ||
+      message.startsWith('Sets') ||
+      message.startsWith('Reps') ||
+      message.startsWith('Weight')
+        ? styles.errorMessage
+        : styles.successMessage,
+    ]}
+  >
+    {message}
+  </Text>
+)}
+
+<Pressable onPress={addExercise} style={styles.addButton}>
+  <Text style={styles.addButtonText}>Add to workout</Text>
+  <Text style={styles.addButtonIcon}>＋</Text>
+</Pressable>
 </View>
       </ScrollView>
     </View>
@@ -164,5 +225,35 @@ fieldRow: {
 },
 fieldColumn: {
   flex: 1,
+},
+message: {
+  fontSize: 11,
+  fontWeight: '700',
+  marginBottom: 10,
+},
+errorMessage: {
+  color: '#C54F45',
+},
+successMessage: {
+  color: '#3D702D',
+},
+addButton: {
+  minHeight: 48,
+  borderRadius: 15,
+  backgroundColor: '#B9F56B',
+  paddingHorizontal: 15,
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+},
+addButtonText: {
+  color: '#17231D',
+  fontSize: 13,
+  fontWeight: '900',
+},
+addButtonIcon: {
+  color: '#17231D',
+  fontSize: 19,
+  fontWeight: '800',
 },
 })
