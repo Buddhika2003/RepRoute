@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import {
+    Pressable,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -7,6 +8,10 @@ import {
     TextInput,
     View
 } from 'react-native'
+
+const filters = ['All', 'Chest', 'Back', 'Legs', 'Shoulders', 'Arms']
+
+
 
 export default function ExercisesScreen() {
     const exercises = [
@@ -65,18 +70,23 @@ export default function ExercisesScreen() {
 ]
 
 const [search, setSearch] = useState('')
+const [selectedFilter, setSelectedFilter] = useState('All')
 
 const filteredExercises = useMemo(() => {
   const query = search.trim().toLowerCase()
 
   return exercises.filter((exercise) => {
-    return (
-      exercise.name.toLowerCase().includes(query) ||
-      exercise.muscle.toLowerCase().includes(query) ||
-      exercise.equipment.toLowerCase().includes(query)
-    )
-  })
-}, [search])
+  const matchesFilter =
+    selectedFilter === 'All' || exercise.muscle === selectedFilter
+
+  const matchesSearch =
+    exercise.name.toLowerCase().includes(query) ||
+    exercise.muscle.toLowerCase().includes(query) ||
+    exercise.equipment.toLowerCase().includes(query)
+
+  return matchesFilter && matchesSearch
+})
+}, [search,selectedFilter])
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -92,7 +102,35 @@ const filteredExercises = useMemo(() => {
             placeholderTextColor="#7B8494"
             style={styles.searchInput}
             autoCapitalize="none"/>
+        
+        <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filterList}>
+            {filters.map((filter) => {
+            const isSelected = selectedFilter === filter
 
+    return (
+      <Pressable
+        key={filter}
+        onPress={() => setSelectedFilter(filter)}
+        style={[
+          styles.filterButton,
+          isSelected && styles.filterButtonSelected,
+        ]}
+      >
+        <Text
+          style={[
+            styles.filterText,
+            isSelected && styles.filterTextSelected,
+          ]}
+        >
+          {filter}
+        </Text>
+      </Pressable>
+    )
+  })}
+</ScrollView>
         <Text style={styles.resultCount}>
             {filteredExercises.length} exercises
         </Text>
@@ -190,5 +228,29 @@ searchInput: {
   paddingHorizontal: 16,
   paddingVertical: 14,
   marginBottom: 18,
+},
+filterList: {
+  gap: 9,
+  paddingVertical: 18,
+},
+filterButton: {
+  backgroundColor: '#FFFFFF',
+  borderColor: '#E2E6ED',
+  borderRadius: 18,
+  borderWidth: 1,
+  paddingHorizontal: 15,
+  paddingVertical: 9,
+},
+filterButtonSelected: {
+  backgroundColor: '#172B4D',
+  borderColor: '#172B4D',
+},
+filterText: {
+  color: '#475467',
+  fontSize: 13,
+  fontWeight: '700',
+},
+filterTextSelected: {
+  color: '#FFFFFF',
 },
 })
