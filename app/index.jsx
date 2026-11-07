@@ -125,6 +125,12 @@ export default function DashboardScreen() {
         <Text style={styles.workoutButtonText}>Log a workout</Text>
         <Text style={styles.workoutButtonIcon}>→</Text>
       </Pressable>
+      <Pressable
+  onPress={() => router.push('/exercises')}
+  style={styles.secondaryButton}
+>
+  <Text style={styles.secondaryButtonText}>Browse exercises</Text>
+</Pressable>
     </View>
   )
 }
