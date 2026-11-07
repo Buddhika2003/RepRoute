@@ -118,19 +118,30 @@ export default function DashboardScreen() {
         </View>
       </ScrollView>
 
-      <Pressable
-          style={styles.workoutButton}
-          onPress={() => router.push('/workout-log')}>
+      <View style={styles.bottomNav}>
+  {[
+  { label: 'Home', icon: '⌂', route: '/' },
+  { label: 'Workout', icon: '▤', route: '/workout-log' },
+  { label: 'Exercises', icon: '＋', route: '/exercises' },
+].map((item) => {
+  const isActive = item.label === 'Home'
 
-        <Text style={styles.workoutButtonText}>Log a workout</Text>
-        <Text style={styles.workoutButtonIcon}>→</Text>
-      </Pressable>
-      <Pressable
-  onPress={() => router.push('/exercises')}
-  style={styles.secondaryButton}
->
-  <Text style={styles.secondaryButtonText}>Browse exercises</Text>
-</Pressable>
+  return (
+    <Pressable
+      key={item.label}
+      onPress={() => router.push(item.route)}
+      style={styles.navItem}
+    >
+      <Text style={[styles.navIcon, isActive && styles.navActive]}>
+        {item.icon}
+      </Text>
+      <Text style={[styles.navLabel, isActive && styles.navActive]}>
+        {item.label}
+      </Text>
+    </Pressable>
+  )
+})}
+</View>
     </View>
   )
 }
@@ -385,26 +396,35 @@ const styles = StyleSheet.create({
     letterSpacing: 1.1,
     textAlign: 'center',
     marginTop: 25,
-  },
-  workoutButton: {
-  width: 175,
-  minHeight: 44,
-  borderRadius: 14,
-  backgroundColor: '#B9F56B',
-  paddingHorizontal: 13,
+  },bottomNav: {
+  minHeight: 68,
+  backgroundColor: '#FFFFFF',
+  borderTopWidth: 1,
+  borderTopColor: '#E7EBE5',
   flexDirection: 'row',
   alignItems: 'center',
-  justifyContent: 'space-between',
-  marginTop: 15,
+  justifyContent: 'space-around',
+  paddingHorizontal: 4,
+  paddingTop: 8,
+  paddingBottom: 10,
 },
-workoutButtonText: {
-  color: '#17231D',
-  fontSize: 12,
-  fontWeight: '900',
+navItem: {
+  flex: 1,
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 3,
 },
-workoutButtonIcon: {
-  color: '#17231D',
-  fontSize: 18,
-  fontWeight: '800',
+navIcon: {
+  color: '#7E8982',
+  fontSize: 22,
+  fontWeight: '700',
+},
+navLabel: {
+  color: '#7E8982',
+  fontSize: 10,
+  fontWeight: '700',
+},
+navActive: {
+  color: '#B9F56B',
 },
 })
