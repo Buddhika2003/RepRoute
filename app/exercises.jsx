@@ -1,8 +1,10 @@
+import { useMemo, useState } from 'react'
 import {
     SafeAreaView,
     ScrollView,
     StyleSheet,
     Text,
+    TextInput,
     View
 } from 'react-native'
 
@@ -61,6 +63,20 @@ export default function ExercisesScreen() {
     description: 'An isolation exercise that targets the triceps.',
   },
 ]
+
+const [search, setSearch] = useState('')
+
+const filteredExercises = useMemo(() => {
+  const query = search.trim().toLowerCase()
+
+  return exercises.filter((exercise) => {
+    return (
+      exercise.name.toLowerCase().includes(query) ||
+      exercise.muscle.toLowerCase().includes(query) ||
+      exercise.equipment.toLowerCase().includes(query)
+    )
+  })
+}, [search])
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -69,21 +85,29 @@ export default function ExercisesScreen() {
         <Text style={styles.subtitle}>
           Find an exercise and explore the muscles and equipment it uses.
         </Text>
+        <TextInput
+            value={search}
+            onChangeText={setSearch}
+            placeholder="Search exercises or equipment"
+            placeholderTextColor="#7B8494"
+            style={styles.searchInput}
+            autoCapitalize="none"/>
+
         <Text style={styles.resultCount}>
-  {exercises.length} exercises
-</Text>
+            {filteredExercises.length} exercises
+        </Text>
 
-{exercises.map((exercise) => (
-  <View key={exercise.id} style={styles.exerciseCard}>
-    <View style={styles.levelBadge}>
-      <Text style={styles.levelText}>{exercise.level}</Text>
+        {filteredExercises.map((exercise) => (
+        <View key={exercise.id} style={styles.exerciseCard}>
+            <View style={styles.levelBadge}>
+            <Text style={styles.levelText}>{exercise.level}</Text>
+        </View>
+
+        <Text style={styles.exerciseName}>{exercise.name}</Text>
+        <Text style={styles.exerciseMeta}>
+            {exercise.muscle} · {exercise.equipment}
+        </Text>
     </View>
-
-    <Text style={styles.exerciseName}>{exercise.name}</Text>
-    <Text style={styles.exerciseMeta}>
-      {exercise.muscle} · {exercise.equipment}
-    </Text>
-  </View>
 ))}
       </ScrollView>
     </SafeAreaView>
@@ -155,5 +179,16 @@ exerciseMeta: {
   color: '#667085',
   fontSize: 13,
   marginTop: 6,
+},
+searchInput: {
+  backgroundColor: '#FFFFFF',
+  borderColor: '#E2E6ED',
+  borderRadius: 14,
+  borderWidth: 1,
+  color: '#111827',
+  fontSize: 15,
+  paddingHorizontal: 16,
+  paddingVertical: 14,
+  marginBottom: 18,
 },
 })
