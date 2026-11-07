@@ -82,6 +82,33 @@ export default function GoalsScreen() {
                 <Text style={styles.addButtonText}>Add goal</Text>
             </Pressable>
         </View>
+        <View style={styles.listHeader}>
+            <Text style={styles.sectionTitle}>Your goals</Text>
+            <Text style={styles.count}>{goals.length}</Text>
+            </View>
+
+            {goals.length === 0 ? (
+            <View style={styles.emptyCard}>
+                <Text style={styles.emptyTitle}>No goals yet</Text>
+                <Text style={styles.emptyText}>
+                Add a goal above to give your training a target.
+                </Text>
+            </View>
+            ) : (
+            goals.map((goal) => (
+                <View key={goal.id} style={styles.goalCard}>
+                <View style={styles.goalTopRow}>
+                    <View style={styles.goalIcon}>
+                    <Text style={styles.goalIconText}>◎</Text>
+                </View>
+                </View>
+
+                <Text style={styles.goalCategory}>{goal.category}</Text>
+                <Text style={styles.goalTitle}>{goal.title}</Text>
+                <Text style={styles.goalTarget}>{goal.target}</Text>
+                </View>
+            ))
+            )}
       </ScrollView>
     </SafeAreaView>
   )
@@ -159,5 +186,86 @@ addButtonText: {
   color: '#FFFFFF',
   fontSize: 15,
   fontWeight: '800',
+},
+listHeader: {
+  alignItems: 'center',
+  flexDirection: 'row',
+  marginBottom: 12,
+  marginTop: 25,
+},
+count: {
+  backgroundColor: '#E5F4ED',
+  borderRadius: 10,
+  color: '#11845B',
+  fontSize: 12,
+  fontWeight: '800',
+  marginLeft: 9,
+  overflow: 'hidden',
+  paddingHorizontal: 9,
+  paddingVertical: 4,
+},
+goalCard: {
+  backgroundColor: '#FFFFFF',
+  borderColor: '#E8EBF0',
+  borderRadius: 18,
+  borderWidth: 1,
+  marginBottom: 12,
+  padding: 17,
+},
+goalTopRow: {
+  alignItems: 'center',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+},
+goalIcon: {
+  alignItems: 'center',
+  backgroundColor: '#E9F7F1',
+  borderRadius: 12,
+  height: 42,
+  justifyContent: 'center',
+  width: 42,
+},
+goalIconText: {
+  color: '#11845B',
+  fontSize: 25,
+  fontWeight: '800',
+},
+goalCategory: {
+  color: '#11845B',
+  fontSize: 11,
+  fontWeight: '800',
+  letterSpacing: 0.7,
+  marginTop: 14,
+  textTransform: 'uppercase',
+},
+goalTitle: {
+  color: '#172B4D',
+  fontSize: 17,
+  fontWeight: '800',
+  marginTop: 5,
+},
+goalTarget: {
+  color: '#667085',
+  fontSize: 14,
+  lineHeight: 20,
+  marginTop: 6,
+},
+emptyCard: {
+  alignItems: 'center',
+  backgroundColor: '#FFFFFF',
+  borderRadius: 18,
+  padding: 24,
+},
+emptyTitle: {
+  color: '#172B4D',
+  fontSize: 16,
+  fontWeight: '800',
+},
+emptyText: {
+  color: '#667085',
+  fontSize: 13,
+  lineHeight: 20,
+  marginTop: 7,
+  textAlign: 'center',
 },
 })
