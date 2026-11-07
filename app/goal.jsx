@@ -45,6 +45,23 @@ export default function GoalsScreen() {
         setTitle('')
         setTarget('')
         }
+    function removeGoal(goalId) {
+        Alert.alert(
+            'Remove goal?',
+            'This goal will be removed from the list.',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Remove',
+                    style: 'destructive',
+                    onPress: () =>
+                    setGoals((currentGoals) =>
+                        currentGoals.filter((goal) => goal.id !== goalId)
+                    ),
+                },
+                ]
+            )
+            }
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -98,9 +115,18 @@ export default function GoalsScreen() {
             goals.map((goal) => (
                 <View key={goal.id} style={styles.goalCard}>
                 <View style={styles.goalTopRow}>
-                    <View style={styles.goalIcon}>
+                <View style={styles.goalIcon}>
                     <Text style={styles.goalIconText}>◎</Text>
                 </View>
+
+                <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`Remove ${goal.title}`}
+                    onPress={() => removeGoal(goal.id)}
+                    style={styles.removeButton}>
+
+                    <Text style={styles.removeButtonText}>Remove</Text>
+                </Pressable>
                 </View>
 
                 <Text style={styles.goalCategory}>{goal.category}</Text>
@@ -267,5 +293,14 @@ emptyText: {
   lineHeight: 20,
   marginTop: 7,
   textAlign: 'center',
+},
+removeButton: {
+  paddingHorizontal: 8,
+  paddingVertical: 7,
+},
+removeButtonText: {
+  color: '#B42318',
+  fontSize: 12,
+  fontWeight: '700',
 },
 })
