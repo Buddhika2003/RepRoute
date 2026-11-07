@@ -124,6 +124,7 @@ export default function DashboardScreen() {
   { label: 'Workout', icon: '▤', route: '/workout-log' },
   { label: 'Exercises', icon: '＋', route: '/exercises' },
   { label: 'Progress', icon: '↗', route: '/progress' },
+  { label: 'Goal', icon: '◎', route: '/goal'}
 ].map((item) => {
   const isActive = item.label === 'Home'
 
