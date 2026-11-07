@@ -1,5 +1,7 @@
+import { router } from 'expo-router'
 import { useMemo } from 'react'
 import {
+    Pressable,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -19,7 +21,12 @@ export default function ProgressScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
+        <Pressable
+            onPress={() => router.replace('/')}
+            style={styles.backButton}>
+            <Text style={styles.backButtonText}>‹  Dashboard</Text>
+        </Pressable>
         <Text style={styles.eyebrow}>YOUR TRAINING</Text>
         <Text style={styles.title}>Progress</Text>
         <Text style={styles.subtitle}>
@@ -145,5 +152,15 @@ statLabel: {
   fontSize: 12,
   fontWeight: '600',
   marginTop: 5,
+},
+backButton: {
+  alignSelf: 'flex-start',
+  marginBottom: 14,
+  paddingVertical: 6,
+},
+backButtonText: {
+  color: '#11845B',
+  fontSize: 14,
+  fontWeight: '700',
 },
 })

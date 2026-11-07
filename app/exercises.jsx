@@ -1,3 +1,4 @@
+import { router } from 'expo-router'
 import { useMemo, useState } from 'react'
 import {
     Pressable,
@@ -89,7 +90,13 @@ const filteredExercises = useMemo(() => {
 }, [search,selectedFilter])
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
+        <Pressable
+            onPress={() => router.replace('/')}
+            style={styles.backButton}>
+            <Text style={styles.backButtonText}>‹  Dashboard</Text>
+        </Pressable>
+
         <Text style={styles.eyebrow}>TRAINING LIBRARY</Text>
         <Text style={styles.title}>Exercises</Text>
         <Text style={styles.subtitle}>
@@ -252,5 +259,15 @@ filterText: {
 },
 filterTextSelected: {
   color: '#FFFFFF',
+},
+backButton: {
+  alignSelf: 'flex-start',
+  marginBottom: 14,
+  paddingVertical: 6,
+},
+backButtonText: {
+  color: '#402f9b',
+  fontSize: 14,
+  fontWeight: '700',
 },
 })

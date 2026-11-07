@@ -1,3 +1,4 @@
+import { router } from 'expo-router'
 import { useState } from 'react'
 import {
     Alert,
@@ -65,6 +66,11 @@ export default function GoalsScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
+        <Pressable
+            onPress={() => router.replace('/')}
+            style={styles.backButton}>
+            <Text style={styles.backButtonText}>‹  Dashboard</Text>
+        </Pressable>
         <Text style={styles.eyebrow}>YOUR PLAN</Text>
         <Text style={styles.title}>Goals</Text>
         <Text style={styles.subtitle}>
@@ -301,6 +307,16 @@ removeButton: {
 removeButtonText: {
   color: '#B42318',
   fontSize: 12,
+  fontWeight: '700',
+},
+backButton: {
+  alignSelf: 'flex-start',
+  marginBottom: 14,
+  paddingVertical: 6,
+},
+backButtonText: {
+  color: '#11845B',
+  fontSize: 14,
   fontWeight: '700',
 },
 })
