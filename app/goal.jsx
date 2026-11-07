@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import {
+    Alert,
+    Pressable,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -8,11 +10,41 @@ import {
     View
 } from 'react-native'
 
+const initialGoals = [
+  {
+    id: 'goal-1',
+    title: 'Train consistently',
+    target: 'Complete 3 workouts each week',
+    category: 'Consistency',
+  },
+]
+
 export default function GoalsScreen() {
 
     const [title, setTitle] = useState('')
     const [target, setTarget] = useState('')
-    
+    const [goals, setGoals] = useState(initialGoals)
+
+    function addGoal() {
+        const cleanTitle = title.trim()
+        const cleanTarget = target.trim()
+
+        if (!cleanTitle || !cleanTarget) {
+            Alert.alert('Missing information', 'Enter a goal and its target.')
+            return
+        }
+
+        const newGoal = {
+            id: `${Date.now()}`,
+            title: cleanTitle,
+            target: cleanTarget,
+            category: 'Personal goal',
+        }
+
+        setGoals((currentGoals) => [newGoal, ...currentGoals])
+        setTitle('')
+        setTarget('')
+        }
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -41,6 +73,14 @@ export default function GoalsScreen() {
                 placeholderTextColor="#87909E"
                 style={styles.input}
                 maxLength={ 100}/>
+            <Pressable
+                onPress={addGoal}
+                style={({ pressed }) => [
+                    styles.addButton,
+                    pressed && styles.buttonPressed,
+                    ]}>
+                <Text style={styles.addButtonText}>Add goal</Text>
+            </Pressable>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -104,5 +144,20 @@ input: {
   fontSize: 14,
   paddingHorizontal: 13,
   paddingVertical: 12,
+},
+addButton: {
+  alignItems: 'center',
+  backgroundColor: '#11845B',
+  borderRadius: 12,
+  marginTop: 18,
+  paddingVertical: 14,
+},
+buttonPressed: {
+  opacity: 0.8,
+},
+addButtonText: {
+  color: '#FFFFFF',
+  fontSize: 15,
+  fontWeight: '800',
 },
 })
