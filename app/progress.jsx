@@ -1,12 +1,12 @@
 import { router } from 'expo-router'
 import { useMemo } from 'react'
 import {
-    Pressable,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
 } from 'react-native'
 
 export default function ProgressScreen() {
@@ -22,11 +22,13 @@ export default function ProgressScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.container}>
+        
         <Pressable
             onPress={() => router.replace('/')}
             style={styles.backButton}>
             <Text style={styles.backButtonText}>‹  Dashboard</Text>
         </Pressable>
+
         <Text style={styles.eyebrow}>YOUR TRAINING</Text>
         <Text style={styles.title}>Progress</Text>
         <Text style={styles.subtitle}>
@@ -162,5 +164,6 @@ backButtonText: {
   color: '#11845B',
   fontSize: 14,
   fontWeight: '700',
+
 },
 })
