@@ -8,6 +8,7 @@ import {
   TextInput,
   View
 } from 'react-native'
+import BottomNav from '../component/bottomNav'
 
 export default function WorkoutLogScreen() {
 
@@ -180,6 +181,7 @@ export default function WorkoutLogScreen() {
   Your workout entries will be saved on this device in a later step.
 </Text>
       </ScrollView>
+      <BottomNav/>
     </View>
   )
 }

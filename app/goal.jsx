@@ -1,15 +1,16 @@
 import { router } from 'expo-router'
 import { useState } from 'react'
 import {
-    Alert,
-    Pressable,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View
+  Alert,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View
 } from 'react-native'
+import BottomNav from '../component/bottomNav'
 
 const initialGoals = [
   {
@@ -142,6 +143,7 @@ export default function GoalsScreen() {
             ))
             )}
       </ScrollView>
+      <BottomNav/>
     </SafeAreaView>
   )
 }

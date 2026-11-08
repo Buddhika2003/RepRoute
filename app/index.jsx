@@ -1,5 +1,5 @@
-import { router } from 'expo-router'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import BottomNav from '../component/bottomNav'
 
 const weeklyActivity = [
   { day: 'M', height: 0 },
@@ -31,6 +31,7 @@ export default function DashboardScreen() {
   return (
     <View style={styles.page}>
       <ScrollView
+        style={{flex:1}}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
@@ -118,33 +119,8 @@ export default function DashboardScreen() {
         </View>
       </ScrollView>
 
-      <View style={styles.bottomNav}>
-  {[
-  { label: 'Home', icon: '⌂', route: '/' },
-  { label: 'Workout', icon: '▤', route: '/workout-log' },
-  { label: 'Exercise', icon: '＋', route: '/exercises' },
-  { label: 'Progress', icon: '↗', route: '/progress' },
-  { label: 'Goal', icon: '◎', route: '/goal'},
-  { label: 'Profile', icon:'●' , route: '/profile'}
-].map((item) => {
-  const isActive = item.label === 'Home'
+      <BottomNav />
 
-  return (
-    <Pressable
-      key={item.label}
-      onPress={() => router.push(item.route)}
-      style={styles.navItem}
-    >
-      <Text style={[styles.navIcon, isActive && styles.navActive]}>
-        {item.icon}
-      </Text>
-      <Text style={[styles.navLabel, isActive && styles.navActive]}>
-        {item.label}
-      </Text>
-    </Pressable>
-  )
-})}
-</View>
     </View>
   )
 }
@@ -399,35 +375,5 @@ const styles = StyleSheet.create({
     letterSpacing: 1.1,
     textAlign: 'center',
     marginTop: 25,
-  },bottomNav: {
-  minHeight: 68,
-  backgroundColor: '#FFFFFF',
-  borderTopWidth: 1,
-  borderTopColor: '#E7EBE5',
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-around',
-  paddingHorizontal: 4,
-  paddingTop: 8,
-  paddingBottom: 10,
-},
-navItem: {
-  flex: 1,
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 3,
-},
-navIcon: {
-  color: '#7E8982',
-  fontSize: 22,
-  fontWeight: '700',
-},
-navLabel: {
-  color: '#7E8982',
-  fontSize: 10,
-  fontWeight: '700',
-},
-navActive: {
-  color: '#B9F56B',
-},
+  },
 })

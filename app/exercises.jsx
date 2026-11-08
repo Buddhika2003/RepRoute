@@ -1,14 +1,15 @@
 import { router } from 'expo-router'
 import { useMemo, useState } from 'react'
 import {
-    Pressable,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View
 } from 'react-native'
+import BottomNav from '../component/bottomNav'
 
 const filters = ['All', 'Chest', 'Back', 'Legs', 'Shoulders', 'Arms']
 
@@ -155,6 +156,7 @@ const filteredExercises = useMemo(() => {
     </View>
 ))}
       </ScrollView>
+      <BottomNav/>
     </SafeAreaView>
   )
 }

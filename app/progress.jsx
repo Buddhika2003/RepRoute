@@ -8,6 +8,7 @@ import {
   Text,
   View
 } from 'react-native'
+import BottomNav from '../component/bottomNav'
 
 export default function ProgressScreen() {
     const summary = useMemo(() => {
@@ -63,6 +64,7 @@ export default function ProgressScreen() {
     </View>
     </View>
       </ScrollView>
+      <BottomNav/>
     </SafeAreaView>
   )
 }

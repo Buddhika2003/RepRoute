@@ -11,6 +11,9 @@ import {
     TextInput,
     View
 } from 'react-native'
+import BottomNav from '../component/bottomNav'
+
+
 
 export default function ProfileScreen() {
     const [name, setName] = useState('Athlete')
@@ -38,17 +41,23 @@ function showMessage(title, message) {
     return
   }
 
-  Alert.alert(title, message)
-}
+    Alert.alert(title, message)
+    }
+
+function openScreen(route) {
+    router.push(route)
+    }
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
+        
         <Pressable
             onPress={() => router.push('/')}
             style={styles.backButton}>
             <Text style={styles.backButtonText}>‹  Dashboard</Text>
         </Pressable>
+        
         <Text style={styles.eyebrow}>YOUR ACCOUNT</Text>
         <Text style={styles.title}>Profile</Text>
         <Text style={styles.subtitle}>
@@ -84,17 +93,35 @@ function showMessage(title, message) {
                 placeholder="3"
                 placeholderTextColor="#87909E"
                 style={styles.input}/>
-            </View>
+            
             
             <Pressable
-                onpress={saveProfile}
+                onPress={saveProfile}
                 style={({pressed}) => [
                     styles.saveButton,
                     pressed && styles.buttonPressed
                 ]}>
                 <Text style={styles.saveButtonText}>Save</Text>
             </Pressable>
+        </View>
+        <Text style={styles.sectionTitleWithMargin}>Quick access</Text>
+
+            <Pressable
+                onPress={() => openScreen('/workout-log')}
+                style={styles.linkCard}>
+            <Text style={styles.linkTitle}>Workout log</Text>
+            <Text style={styles.linkArrow}>›</Text>
+            </Pressable>
+
+            <Pressable
+                onPress={() => openScreen('/exercises')}
+                style={styles.linkCard}>
+            <Text style={styles.linkTitle}>Exercise library</Text>
+            <Text style={styles.linkArrow}>›</Text>
+            </Pressable>
+  
       </ScrollView>
+      <BottomNav/>
     </SafeAreaView>
   )
 }
@@ -209,5 +236,38 @@ backButtonText:{
     color:'#16146b',
     fontWeight: '600',
     fontSize:14
-}
+},
+buttonPressed: {
+  opacity: 0.8,
+},
+sectionTitleWithMargin: {
+  color: '#172B4D',
+  fontSize: 18,
+  fontWeight: '800',
+  marginBottom: 11,
+  marginTop: 24,
+},
+linkCard: {
+  alignItems: 'center',
+  backgroundColor: '#FFFFFF',
+  borderColor: '#E8EBF0',
+  borderRadius: 14,
+  borderWidth: 1,
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginBottom: 9,
+  paddingHorizontal: 16,
+  paddingVertical: 15,
+},
+linkTitle: {
+  color: '#172B4D',
+  fontSize: 14,
+  fontWeight: '700',
+},
+linkArrow: {
+  color: '#11845B',
+  fontSize: 22,
+  fontWeight: '700',
+},
+
 })
