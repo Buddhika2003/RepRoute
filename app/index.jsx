@@ -122,9 +122,10 @@ export default function DashboardScreen() {
   {[
   { label: 'Home', icon: '⌂', route: '/' },
   { label: 'Workout', icon: '▤', route: '/workout-log' },
-  { label: 'Exercises', icon: '＋', route: '/exercises' },
+  { label: 'Exercise', icon: '＋', route: '/exercises' },
   { label: 'Progress', icon: '↗', route: '/progress' },
-  { label: 'Goal', icon: '◎', route: '/goal'}
+  { label: 'Goal', icon: '◎', route: '/goal'},
+  { label: 'Profile', icon:'●' , route: '/profile'}
 ].map((item) => {
   const isActive = item.label === 'Home'
 
