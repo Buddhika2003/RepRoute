@@ -1,11 +1,15 @@
+import { useState } from 'react'
 import {
     SafeAreaView,
     ScrollView,
     StyleSheet,
     Text,
+    View
 } from 'react-native'
 
 export default function ProfileScreen() {
+    const [name, setName] = useState('Athlete')
+    
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -14,6 +18,15 @@ export default function ProfileScreen() {
         <Text style={styles.subtitle}>
           Personalize your training experience.
         </Text>
+        <View style={styles.profileCard}>
+            <View style={styles.avatar}>
+                <Text style={styles.avatarText}>
+                {name.trim() ? name.trim()[0].toUpperCase() : 'A'}
+                </Text>
+            </View>
+            <Text style={styles.profileName}>{name.trim() || 'Athlete'}</Text>
+            <Text style={styles.profileCaption}>RepRoute member</Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   )
@@ -48,4 +61,35 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 20,
   },
+  profileCard: {
+  alignItems: 'center',
+  backgroundColor: '#172B4D',
+  borderRadius: 20,
+  marginBottom: 16,
+  padding: 22,
+},
+avatar: {
+  alignItems: 'center',
+  backgroundColor: '#B9F56B',
+  borderRadius: 31,
+  height: 62,
+  justifyContent: 'center',
+  width: 62,
+},
+avatarText: {
+  color: '#172B4D',
+  fontSize: 25,
+  fontWeight: '900',
+},
+profileName: {
+  color: '#FFFFFF',
+  fontSize: 20,
+  fontWeight: '800',
+  marginTop: 12,
+},
+profileCaption: {
+  color: '#BCC9D9',
+  fontSize: 13,
+  marginTop: 5,
+},
 })
