@@ -1,3 +1,4 @@
+import { router } from 'expo-router'
 import { useState } from 'react'
 import {
     Alert,
@@ -43,6 +44,11 @@ function showMessage(title, message) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
+        <Pressable
+            onPress={() => router.push('/')}
+            style={styles.backButton}>
+            <Text style={styles.backButtonText}>‹  Dashboard</Text>
+        </Pressable>
         <Text style={styles.eyebrow}>YOUR ACCOUNT</Text>
         <Text style={styles.title}>Profile</Text>
         <Text style={styles.subtitle}>
@@ -194,4 +200,14 @@ saveButtonText:{
     fontSize: 15,
     fontWeight: '800'
 },
+backButton:{
+    alignSelf: 'flex-start',
+    marginBottom:10,
+    paddingVertical:6
+},
+backButtonText:{
+    color:'#16146b',
+    fontWeight: '600',
+    fontSize:14
+}
 })
