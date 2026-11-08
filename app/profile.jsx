@@ -4,11 +4,13 @@ import {
     ScrollView,
     StyleSheet,
     Text,
+    TextInput,
     View
 } from 'react-native'
 
 export default function ProfileScreen() {
     const [name, setName] = useState('Athlete')
+    const [weeklyTarget, setWeeklyTarget] = useState('3')
     
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -27,6 +29,28 @@ export default function ProfileScreen() {
             <Text style={styles.profileName}>{name.trim() || 'Athlete'}</Text>
             <Text style={styles.profileCaption}>RepRoute member</Text>
         </View>
+
+        <View style={styles.formCard}>
+            <Text style={styles.sectionTitle}>Training profile</Text>
+
+            <Text style={styles.label}>Display name</Text>
+            <TextInput
+                value={name}
+                onChangeText={setName}
+                placeholder="Enter your name"
+                placeholderTextColor="#87909E"
+                style={styles.input}
+                maxLength={40}/>
+
+            <Text style={styles.label}>Weekly workout target</Text>
+            <TextInput
+                value={weeklyTarget}
+                onChangeText={setWeeklyTarget}
+                keyboardType="number-pad"
+                placeholder="3"
+                placeholderTextColor="#87909E"
+                style={styles.input}/>
+            </View>
       </ScrollView>
     </SafeAreaView>
   )
@@ -91,5 +115,34 @@ profileCaption: {
   color: '#BCC9D9',
   fontSize: 13,
   marginTop: 5,
+},
+formCard: {
+  backgroundColor: '#FFFFFF',
+  borderColor: '#E8EBF0',
+  borderRadius: 18,
+  borderWidth: 1,
+  padding: 18,
+},
+sectionTitle: {
+  color: '#172B4D',
+  fontSize: 18,
+  fontWeight: '800',
+},
+label: {
+  color: '#344054',
+  fontSize: 13,
+  fontWeight: '700',
+  marginBottom: 7,
+  marginTop: 16,
+},
+input: {
+  backgroundColor: '#FFFFFF',
+  borderColor: '#D9DEE7',
+  borderRadius: 12,
+  borderWidth: 1,
+  color: '#172B4D',
+  fontSize: 14,
+  paddingHorizontal: 13,
+  paddingVertical: 12,
 },
 })
