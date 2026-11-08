@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import {
+    Alert,
+    Platform,
+    Pressable,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -12,6 +15,31 @@ export default function ProfileScreen() {
     const [name, setName] = useState('Athlete')
     const [weeklyTarget, setWeeklyTarget] = useState('3')
     
+    function saveProfile() {
+        const target = Number(weeklyTarget)
+
+        if (!name.trim()) {
+            showMessage('Name required', 'Enter your name to save your profile.')
+            return
+        }
+
+        if (!Number.isInteger(target) || target < 1 || target > 14) {
+            showMessage('Invalid target', 'Enter a weekly target from 1 to 14.')
+            return
+        }
+
+        showMessage('Profile updated', 'Your profile settings have been updated.')
+        }
+
+function showMessage(title, message) {
+  if (Platform.OS === 'web') {
+    window.alert(`${title}\n\n${message}`)
+    return
+  }
+
+  Alert.alert(title, message)
+}
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -51,6 +79,15 @@ export default function ProfileScreen() {
                 placeholderTextColor="#87909E"
                 style={styles.input}/>
             </View>
+            
+            <Pressable
+                onpress={saveProfile}
+                style={({pressed}) => [
+                    styles.saveButton,
+                    pressed && styles.buttonPressed
+                ]}>
+                <Text style={styles.saveButtonText}>Save</Text>
+            </Pressable>
       </ScrollView>
     </SafeAreaView>
   )
@@ -144,5 +181,17 @@ input: {
   fontSize: 14,
   paddingHorizontal: 13,
   paddingVertical: 12,
+},
+saveButton:{
+    alignItems: 'center',
+    backgroundColor: '#1d9168',
+    borderRadius: 15,
+    padding: 15,
+    marginTop:20,
+},
+saveButtonText:{
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: '800'
 },
 })
