@@ -1,5 +1,5 @@
 import { router } from 'expo-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Pressable,
   ScrollView,
@@ -9,6 +9,7 @@ import {
   View
 } from 'react-native'
 import BottomNav from '../component/bottomNav'
+import { loadLocalData, saveLocalData, STORAGE_KEYS } from '../storage/localStorage'
 
 export default function WorkoutLogScreen() {
 
@@ -18,6 +19,35 @@ export default function WorkoutLogScreen() {
     const [weight, setWeight] = useState('')
     const [message, setMessage] = useState('')
     const [entries, setEntries] = useState([])
+    const [entriesLoaded, setEntriesLoaded] = useState(false)
+
+    useEffect(() => {
+        let isMounted = true
+
+        async function loadEntries() {
+          const savedEntries = await loadLocalData(
+            STORAGE_KEYS.workoutEntries,
+            []
+          )
+
+          if (isMounted) {
+            setEntries(savedEntries)
+            setEntriesLoaded(true)
+          }
+        }
+
+        loadEntries()
+
+        return () => {
+          isMounted = false
+        }
+      }, [])
+
+      useEffect(() => {
+        if (!entriesLoaded) return
+
+        saveLocalData(STORAGE_KEYS.workoutEntries, entries)
+      }, [entries, entriesLoaded])
 
       function addExercise() {
         const setCount = Number(sets)
@@ -61,9 +91,9 @@ export default function WorkoutLogScreen() {
     <View style={styles.page}>
       <ScrollView
         contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
+        showsVerticalScrollIndicator={false}>
+
+        <Pressable onPress={() => router.replace('/')} style={styles.backButton}>
           <Text style={styles.backButtonText}>‹  Dashboard</Text>
         </Pressable>
 
