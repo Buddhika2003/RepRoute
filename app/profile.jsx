@@ -175,8 +175,8 @@ function openScreen(route) {
                     styles.linkCard,
                     { backgroundColor: colors.surface, borderColor: colors.border },
                     ]}>
-            <Text style={styles.linkTitle}>Workout log</Text>
-            <Text style={styles.linkArrow}>›</Text>
+            <Text style={[styles.linkTitle,{color:colors.text}]}>Workout log</Text>
+            <Text style={[styles.linkArrow,{color:colors.text}]}>›</Text>
             </Pressable>
 
             <Pressable
@@ -185,8 +185,8 @@ function openScreen(route) {
                     styles.linkCard,
                     { backgroundColor: colors.surface, borderColor: colors.border },
                     ]}>
-            <Text style={styles.linkTitle}>Exercise library</Text>
-            <Text style={styles.linkArrow}>›</Text>
+            <Text style={[styles.linkTitle,{color:colors.text}]}>Exercise library</Text>
+            <Text style={[styles.linkArrow,{color:colors.text}]}>›</Text>
             </Pressable>
   
       </ScrollView>
