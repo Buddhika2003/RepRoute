@@ -14,7 +14,7 @@ const palettes = {
     text: '#17231D',
     muted: '#7E8982',
     border: '#E7EBE5',
-    primary: '#18372A',
+    primary: '#1dab70',
     accent: '#B9F56B',
   },
   dark: {

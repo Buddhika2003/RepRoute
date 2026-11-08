@@ -7,11 +7,13 @@ import {
     SafeAreaView,
     ScrollView,
     StyleSheet,
+    Switch,
     Text,
     TextInput,
     View
 } from 'react-native'
 import BottomNav from '../component/bottomNav'
+import { useTheme } from '../context/ThemeContext'
 
 
 
@@ -19,6 +21,8 @@ export default function ProfileScreen() {
     const [name, setName] = useState('Athlete')
     const [weeklyTarget, setWeeklyTarget] = useState('3')
     
+    const { theme, colors, toggleTheme } = useTheme()
+
     function saveProfile() {
         const target = Number(weeklyTarget)
 
@@ -49,7 +53,10 @@ function openScreen(route) {
     }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView
+        style={
+            [styles.safeArea, 
+            { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.container}>
         
         <Pressable
@@ -58,64 +65,126 @@ function openScreen(route) {
             <Text style={styles.backButtonText}>‹  Dashboard</Text>
         </Pressable>
         
-        <Text style={styles.eyebrow}>YOUR ACCOUNT</Text>
-        <Text style={styles.title}>Profile</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.eyebrow, { color: colors.primary }]}>YOUR ACCOUNT</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Profile</Text>
+        <Text style={[styles.subtitle, { color: colors.muted }]}>
           Personalize your training experience.
         </Text>
-        <View style={styles.profileCard}>
+        <View style={[
+            styles.profileCard,
+            {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                borderWidth: 1,
+            },
+            ]}>
             <View style={styles.avatar}>
                 <Text style={styles.avatarText}>
                 {name.trim() ? name.trim()[0].toUpperCase() : 'A'}
                 </Text>
             </View>
-            <Text style={styles.profileName}>{name.trim() || 'Athlete'}</Text>
-            <Text style={styles.profileCaption}>RepRoute member</Text>
-        </View>
+            
+            <Text style={[styles.profileName, { color: colors.text }]}>
+                {name.trim() || 'Athlete'}</Text>
+            <Text style={[styles.profileCaption, { color: colors.muted }]}>
+                RepRoute member</Text>
+            
+            </View>
 
-        <View style={styles.formCard}>
-            <Text style={styles.sectionTitle}>Training profile</Text>
+        <View  style={[
+            styles.formCard,
+            {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+            },
+            ]}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Training profile</Text>
 
-            <Text style={styles.label}>Display name</Text>
+            <Text style={[styles.label, { color: colors.muted }]}>Display name</Text>
             <TextInput
                 value={name}
                 onChangeText={setName}
                 placeholder="Enter your name"
                 placeholderTextColor="#87909E"
-                style={styles.input}
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor: colors.surface,
+                        borderColor: colors.border,
+                        color: colors.text,
+                    },
+                    ]}
                 maxLength={40}/>
 
-            <Text style={styles.label}>Weekly workout target</Text>
+            <Text style={[styles.label, { color: colors.muted }]}>Weekly workout target</Text>
             <TextInput
                 value={weeklyTarget}
                 onChangeText={setWeeklyTarget}
                 keyboardType="number-pad"
                 placeholder="3"
                 placeholderTextColor="#87909E"
-                style={styles.input}/>
+                style={[
+                    styles.input,
+                        {
+                            backgroundColor: colors.surface,
+                            borderColor: colors.border,
+                            color: colors.text,
+                        },
+                        ]}/>
             
             
             <Pressable
                 onPress={saveProfile}
                 style={({pressed}) => [
                     styles.saveButton,
-                    pressed && styles.buttonPressed
+                    pressed && styles.buttonPressed,
+                    { backgroundColor: colors.primary }
                 ]}>
-                <Text style={styles.saveButtonText}>Save</Text>
+                <Text
+                    style={[
+                    styles.saveButtonText,
+                    { color: theme === 'dark' ? '#111B16' : '#FFFFFF' },
+                ]}>
+                Save
+                </Text>
             </Pressable>
         </View>
-        <Text style={styles.sectionTitleWithMargin}>Quick access</Text>
+        
+        <View style={[
+                styles.appearanceCard,
+                { backgroundColor: colors.surface, borderColor: colors.border },
+                ]}>
+            <View>
+                <Text style={[styles.appearanceNote, { color: colors.muted }]}>Appearance</Text>
+                <Text style={styles.appearanceNote}>
+                {theme === 'dark' ? 'Dark mode' : 'Light mode'}
+                </Text>
+            </View>
+
+            <Switch
+                value={theme === 'dark'}
+                onValueChange={toggleTheme}
+                trackColor={{ false: '#D0D5DD', true: '#3D702D' }}
+                thumbColor={theme === 'dark' ? '#B9F56B' : '#FFFFFF'}/>
+            </View>
+                    <Text style={[styles.sectionTitleWithMargin, { color: colors.text }]}>Quick access</Text>
 
             <Pressable
                 onPress={() => openScreen('/workout-log')}
-                style={styles.linkCard}>
+                style={[
+                    styles.linkCard,
+                    { backgroundColor: colors.surface, borderColor: colors.border },
+                    ]}>
             <Text style={styles.linkTitle}>Workout log</Text>
             <Text style={styles.linkArrow}>›</Text>
             </Pressable>
 
             <Pressable
                 onPress={() => openScreen('/exercises')}
-                style={styles.linkCard}>
+                style={[
+                    styles.linkCard,
+                    { backgroundColor: colors.surface, borderColor: colors.border },
+                    ]}>
             <Text style={styles.linkTitle}>Exercise library</Text>
             <Text style={styles.linkArrow}>›</Text>
             </Pressable>
@@ -268,6 +337,22 @@ linkArrow: {
   color: '#11845B',
   fontSize: 22,
   fontWeight: '700',
+},
+appearanceCard: {
+  alignItems: 'center',
+  backgroundColor: '#FFFFFF',
+  borderColor: '#E8EBF0',
+  borderRadius: 18,
+  borderWidth: 1,
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginTop: 16,
+  padding: 18,
+},
+appearanceNote: {
+  color: '#667085',
+  fontSize: 13,
+  marginTop: 5,
 },
 
 })
