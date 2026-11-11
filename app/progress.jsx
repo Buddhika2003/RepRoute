@@ -89,6 +89,40 @@ export default function ProgressScreen() {
         }
       }, [entries])
 
+      const weeklyActivity = useMemo(() => {
+        const weekStart = new Date()
+        const mondayOffset = (weekStart.getDay() + 6) % 7
+
+        weekStart.setDate(weekStart.getDate() - mondayOffset)
+        weekStart.setHours(0, 0, 0, 0)
+
+        const dailyCounts = new Map()
+
+        entries.forEach((entry) => {
+          if (!entry.date) return
+
+          const key = getLocalDateKey(entry.date)
+          dailyCounts.set(key, (dailyCounts.get(key) || 0) + 1)
+        })
+
+        return Array.from({ length: 7 }, (_, index) => {
+          const date = new Date(weekStart)
+          date.setDate(weekStart.getDate() + index)
+
+          const key = getLocalDateKey(date)
+
+          return {
+            day: date.toLocaleDateString('en-US', { weekday: 'short' }),
+            exercises: dailyCounts.get(key) || 0,
+          }
+        })
+      }, [entries])
+
+const maxDailyExercises = Math.max(
+  1,
+  ...weeklyActivity.map((item) => item.exercises)
+)
+
   return (
     <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.container}>
@@ -132,6 +166,40 @@ export default function ProgressScreen() {
         <Text style={styles.statLabel}>Active days</Text>
     </View>
     </View>
+    
+    <View style={styles.sectionHeader}>
+  <Text style={styles.sectionTitle}>Weekly activity</Text>
+  <Text style={styles.sectionNote}>THIS WEEK</Text>
+</View>
+
+<View style={styles.activityCard}>
+  <View style={styles.chart}>
+    {weeklyActivity.map((item) => (
+      <View key={item.day} style={styles.chartColumn}>
+        <View style={styles.barTrack}>
+          <View
+            style={[
+              styles.bar,
+              item.exercises > 0 && styles.barActive,
+              {
+                height:
+                  item.exercises === 0
+                    ? 8
+                    : Math.max(16, (item.exercises / maxDailyExercises) * 82),
+              },
+            ]}
+          />
+        </View>
+        <Text style={styles.chartDay}>{item.day}</Text>
+      </View>
+    ))}
+  </View>
+
+  <View style={styles.chartLegend}>
+    <View style={styles.legendDot} />
+    <Text style={styles.legendText}>Exercises logged</Text>
+  </View>
+</View>
       </ScrollView>
       <BottomNav/>
     </SafeAreaView>
@@ -236,5 +304,76 @@ backButtonText: {
   fontSize: 14,
   fontWeight: '700',
 
+},
+sectionHeader: {
+  alignItems: 'center',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginBottom: 12,
+  marginTop: 20,
+},
+sectionTitle: {
+  color: '#172B4D',
+  fontSize: 18,
+  fontWeight: '800',
+},
+sectionNote: {
+  color: '#667085',
+  fontSize: 12,
+},
+activityCard: {
+  backgroundColor: '#FFFFFF',
+  borderColor: '#E8EBF0',
+  borderRadius: 18,
+  borderWidth: 1,
+  padding: 18,
+},
+chart: {
+  alignItems: 'flex-end',
+  flexDirection: 'row',
+  height: 128,
+  justifyContent: 'space-between',
+},
+chartColumn: {
+  alignItems: 'center',
+  flex: 1,
+},
+barTrack: {
+  alignItems: 'center',
+  backgroundColor: '#F1F4F7',
+  borderRadius: 7,
+  height: 100,
+  justifyContent: 'flex-end',
+  overflow: 'hidden',
+  width: 17,
+},
+bar: {
+  backgroundColor: '#D8E0E8',
+  borderRadius: 7,
+  width: 17,
+},
+barActive: {
+  backgroundColor: '#16A36A',
+},
+chartDay: {
+  color: '#667085',
+  fontSize: 10,
+  marginTop: 9,
+},
+chartLegend: {
+  alignItems: 'center',
+  flexDirection: 'row',
+  marginTop: 14,
+},
+legendDot: {
+  backgroundColor: '#16A36A',
+  borderRadius: 4,
+  height: 8,
+  marginRight: 7,
+  width: 8,
+},
+legendText: {
+  color: '#667085',
+  fontSize: 11,
 },
 })
