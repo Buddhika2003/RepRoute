@@ -80,6 +80,7 @@ export default function WorkoutLogScreen() {
         sets: setCount,
         reps: repCount,
         weight: weightValue,
+        date: new Date().toISOString()
         }
 
         setEntries((currentEntries) => [newEntry, ...currentEntries])
@@ -208,7 +209,7 @@ export default function WorkoutLogScreen() {
 )}
 
 <Text style={styles.note}>
-  Your workout entries will be saved on this device in a later step.
+  Your workout entries are saved on this device.
 </Text>
       </ScrollView>
       <BottomNav/>
