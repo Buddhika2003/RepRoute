@@ -1,5 +1,6 @@
 import { router, usePathname } from 'expo-router'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { useTheme } from '../context/ThemeContext'
 
 const tabs = [
   { label: 'Home', icon: '⌂', route: '/' },
@@ -12,9 +13,17 @@ const tabs = [
 
 export default function BottomNav() {
   const pathname = usePathname()
-
+  const { colors } = useTheme()
+  
   return (
-    <View style={styles.bottomNav}>
+    <View
+        style={[
+          styles.bottomNav,
+          {
+            backgroundColor: colors.surface,
+            borderTopColor: colors.border,
+          },
+          ]}>
       {tabs.map((tab) => {
         const isActive = pathname === tab.route
 
@@ -24,10 +33,19 @@ export default function BottomNav() {
             onPress={() => router.replace(tab.route)}
             style={styles.navItem}
           >
-            <Text style={[styles.navIcon, isActive && styles.navActive]}>
+            <Text
+              style={[
+              styles.navIcon,
+              { color: isActive ? colors.primary : colors.muted },
+            ]}>
               {tab.icon}
             </Text>
-            <Text style={[styles.navLabel, isActive && styles.navActive]}>
+
+            <Text
+              style={[
+              styles.navLabel,
+              { color: isActive ? colors.primary : colors.muted },
+            ]}>
               {tab.label}
             </Text>
           </Pressable>
@@ -65,8 +83,5 @@ const styles = StyleSheet.create({
     color: '#716d7a',
     fontSize: 10,
     fontWeight: '700',
-  },
-  navActive: {
-    color: '#aa790f',
   },
 })
