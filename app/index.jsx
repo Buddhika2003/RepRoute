@@ -2,14 +2,15 @@ import { useFocusEffect } from 'expo-router'
 import { useCallback, useMemo, useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import BottomNav from '../component/bottomNav'
+import { useTheme } from '../context/ThemeContext'
 import {
   loadLocalData,
   STORAGE_KEYS,
 } from '../storage/localStorage'
 
-
 function getLocalDateKey(value) {
   const date = new Date(value)
+  
 
   return [
     date.getFullYear(),
@@ -18,18 +19,25 @@ function getLocalDateKey(value) {
   ].join('-')
 }
 
-function StatCard({ label, value, note }) {
+function StatCard({ label, value, note, colors }) {
   return (
-    <View style={styles.statCard}>
-      <Text style={styles.statLabel}>{label}</Text>
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statNote}>{note}</Text>
+    <View
+      style={[
+        styles.statCard,
+        { backgroundColor: colors.surface, borderColor: colors.border },
+      ]}
+    >
+      <Text style={[styles.statLabel, { color: colors.muted }]}>{label}</Text>
+      <Text style={[styles.statValue, { color: colors.text }]}>{value}</Text>
+      <Text style={[styles.statNote, { color: colors.primary }]}>{note}</Text>
     </View>
   )
 }
 
 export default function DashboardScreen() {
+  const { colors } = useTheme()
   const [entries, setEntries] = useState([])
+  
 
 useFocusEffect(
   useCallback(() => {
@@ -131,7 +139,7 @@ const dashboardData = useMemo(() => {
   })
 
   return (
-    <View style={styles.page}>
+    <View style={[styles.page, { backgroundColor: colors.background }]}>
       <ScrollView
         style={{flex:1}}
         contentContainerStyle={styles.scrollContent}
@@ -144,8 +152,8 @@ const dashboardData = useMemo(() => {
             </View>
 
             <View style={styles.brandCopy}>
-              <Text style={styles.brandName}>RepRoute</Text>
-              <Text style={styles.brandTagline}>TRAIN WITH INTENTION</Text>
+              <Text style={[styles.brandName, { color: colors.text }]}>RepRoute</Text>
+              <Text style={[styles.brandTagline, { color: colors.muted }]}>TRAIN WITH INTENTION</Text>
             </View>
 
             <View style={styles.avatar}>
@@ -153,9 +161,9 @@ const dashboardData = useMemo(() => {
             </View>
           </View>
 
-          <Text style={styles.dateLabel}>{today.toUpperCase()}</Text>
-          <Text style={styles.greeting}>Your progress</Text>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.dateLabel, { color: colors.primary }]}>{today.toUpperCase()}</Text>
+          <Text style={[styles.greeting, { color: colors.text }]}>Your progress</Text>
+          <Text style={[styles.subtitle, { color: colors.muted }]}>
             Every workout is a step forward.
           </Text>
 
@@ -171,20 +179,27 @@ const dashboardData = useMemo(() => {
           </View>
 
           <View style={styles.sectionHeading}>
-            <Text style={styles.sectionTitle}>This week</Text>
-            <Text style={styles.sectionNote}>YOUR ACTIVITY</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>
+                This week
+              </Text>
+              <Text style={[styles.sectionNote, { color: colors.muted }]}>
+                YOUR ACTIVITY
+              </Text>
           </View>
 
           <View style={styles.statsRow}>
             <StatCard
+              colors={colors}
               label="Workouts"
               value={dashboardData.workouts}
               note="this week"/>
             <StatCard
+              colors={colors}
               label="Total reps"
               value={dashboardData.totalReps}
               note="this week"/>
             <StatCard
+              colors={colors}
               label="Streak"
               value={`${dashboardData.streak} days`}
               note="keep going"/>
@@ -192,14 +207,31 @@ const dashboardData = useMemo(() => {
           </View>
 
           <View style={styles.sectionHeading}>
-            <Text style={styles.sectionTitle}>Weekly activity</Text>
-            <Text style={styles.sectionNote}>7 DAYS</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              Weekly activity
+            </Text>
+            <Text style={[styles.sectionNote, { color: colors.muted }]}>
+              7 DAYS
+            </Text>
           </View>
 
-          <View style={styles.activityCard}>
+          <View
+            style={[
+            styles.activityCard,
+          {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+          },
+  ]}
+>
             {dashboardData.weeklyActivity.map((item, index) => (
               <View key={`${item.day}-${index}`} style={styles.dayColumn}>
-                <View style={styles.barTrack}>
+                <View
+                    style={[
+                    styles.barTrack,
+                    { backgroundColor: colors.border },
+                    ]}>
+
                   <View
                     style={[
                       styles.activityBar,
@@ -207,27 +239,88 @@ const dashboardData = useMemo(() => {
                     ]}
                   />
                 </View>
-                <Text style={styles.dayLabel}>{item.day}</Text>
+                <Text style={[styles.dayLabel, { color: colors.muted }]}>
+                    {item.day}
+                </Text>
               </View>
             ))}
           </View>
 
           <View style={styles.sectionHeading}>
-            <Text style={styles.sectionTitle}>Recent workouts</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>
+                Recent workouts
+              </Text>
           </View>
 
-          <View style={styles.emptyCard}>
+          <View
+            style={[
+            styles.emptyCard,
+            { backgroundColor: colors.surface, borderColor: colors.border },
+            ]}>
             <View style={styles.emptyIcon}>
               <Text style={styles.emptyIconText}>+</Text>
             </View>
-            <Text style={styles.emptyTitle}>Your training log starts here</Text>
-            <Text style={styles.emptyDescription}>
-              Completed workouts will appear here so you can look back at your
-              progress.
+            <Text style={[styles.emptyTitle, { color: colors.text }]}>
+                  Your training log starts here
+            </Text>
+            <Text style={[styles.emptyDescription, { color: colors.muted }]}>
+                Completed workouts will appear here so you can look back at your progress.
             </Text>
           </View>
 
-          <Text style={styles.footer}>STRONGER, ONE REP AT A TIME</Text>
+          {entries.length === 0 ? (
+  <View
+    style={[
+      styles.emptyCard,
+      { backgroundColor: colors.surface, borderColor: colors.border },
+    ]}
+  >
+   <View
+        style={[
+          styles.emptyIcon,
+          { backgroundColor: colors.border },
+        ]}>
+  <Text style={[styles.emptyIconText, { color: colors.primary }]}>
+    +
+  </Text>
+</View>
+
+    <Text style={[styles.emptyTitle, { color: colors.text }]}>
+      Your training log starts here
+    </Text>
+
+    <Text style={[styles.emptyDescription, { color: colors.muted }]}>
+      Completed workouts will appear here so you can look back at your
+      progress.
+    </Text>
+  </View>
+) : (
+  entries.slice(0, 3).map((entry) => (
+    <View
+      key={entry.id}
+      style={[
+        styles.emptyCard,
+        {
+          alignItems: 'flex-start',
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
+          marginBottom: 10,
+        },
+      ]}
+    >
+      <Text style={[styles.emptyTitle, { color: colors.text }]}>
+        {entry.name}
+      </Text>
+      <Text style={[styles.emptyDescription, { color: colors.muted }]}>
+        {entry.sets} sets · {entry.reps} reps · {entry.weight} kg
+      </Text>
+    </View>
+  ))
+)}
+
+          <Text style={[styles.footer, { color: colors.muted }]}>
+                STRONGER, ONE REP AT A TIME
+          </Text>
         </View>
       </ScrollView>
 
