@@ -1,15 +1,22 @@
+import { useFocusEffect } from 'expo-router'
+import { useCallback, useMemo, useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import BottomNav from '../component/bottomNav'
+import {
+  loadLocalData,
+  STORAGE_KEYS,
+} from '../storage/localStorage'
 
-const weeklyActivity = [
-  { day: 'M', height: 0 },
-  { day: 'T', height: 0 },
-  { day: 'W', height: 0 },
-  { day: 'T', height: 0 },
-  { day: 'F', height: 0 },
-  { day: 'S', height: 0 },
-  { day: 'S', height: 0 },
-]
+
+function getLocalDateKey(value) {
+  const date = new Date(value)
+
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-')
+}
 
 function StatCard({ label, value, note }) {
   return (
@@ -22,6 +29,101 @@ function StatCard({ label, value, note }) {
 }
 
 export default function DashboardScreen() {
+  const [entries, setEntries] = useState([])
+
+useFocusEffect(
+  useCallback(() => {
+    let isActive = true
+
+    async function loadEntries() {
+      const savedEntries = await loadLocalData(
+        STORAGE_KEYS.workoutEntries,
+        []
+      )
+
+      if (isActive) {
+        setEntries(Array.isArray(savedEntries) ? savedEntries : [])
+      }
+    }
+
+    loadEntries()
+
+    return () => {
+      isActive = false
+    }
+  }, [])
+)
+
+const dashboardData = useMemo(() => {
+  const now = new Date()
+  const weekStart = new Date(now)
+  const mondayOffset = (now.getDay() + 6) % 7
+
+  weekStart.setDate(now.getDate() - mondayOffset)
+  weekStart.setHours(0, 0, 0, 0)
+
+  const nextWeekStart = new Date(weekStart)
+  nextWeekStart.setDate(weekStart.getDate() + 7)
+
+  const thisWeekEntries = entries.filter((entry) => {
+    if (!entry.date) return false
+
+    const entryDate = new Date(entry.date)
+    return entryDate >= weekStart && entryDate < nextWeekStart
+  })
+
+  const workoutDays = new Set(
+    thisWeekEntries.map((entry) => getLocalDateKey(entry.date))
+  )
+
+  const dailyCounts = new Map()
+  thisWeekEntries.forEach((entry) => {
+    const key = getLocalDateKey(entry.date)
+    dailyCounts.set(key, (dailyCounts.get(key) || 0) + 1)
+  })
+
+  const weeklyActivity = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(weekStart)
+    date.setDate(weekStart.getDate() + index)
+    const key = getLocalDateKey(date)
+
+    return {
+      day: date.toLocaleDateString('en-US', { weekday: 'short' }),
+      height: dailyCounts.get(key) || 0,
+    }
+  })
+
+  const loggedDays = new Set(
+    entries
+      .filter((entry) => entry.date)
+      .map((entry) => getLocalDateKey(entry.date))
+  )
+
+  const checkDate = new Date(now)
+  checkDate.setHours(0, 0, 0, 0)
+
+  if (!loggedDays.has(getLocalDateKey(checkDate))) {
+    checkDate.setDate(checkDate.getDate() - 1)
+  }
+
+  let streak = 0
+  while (loggedDays.has(getLocalDateKey(checkDate))) {
+    streak += 1
+    checkDate.setDate(checkDate.getDate() - 1)
+  }
+
+  return {
+    workouts: workoutDays.size,
+    totalReps: thisWeekEntries.reduce(
+      (total, entry) =>
+        total + (Number(entry.sets) || 0) * (Number(entry.reps) || 0),
+      0
+    ),
+    streak,
+    weeklyActivity,
+  }
+}, [entries])
+
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
@@ -74,9 +176,19 @@ export default function DashboardScreen() {
           </View>
 
           <View style={styles.statsRow}>
-            <StatCard label="Workouts" value="0" note="this week" />
-            <StatCard label="Total reps" value="0" note="this week" />
-            <StatCard label="Streak" value="0 days" note="keep going" />
+            <StatCard
+              label="Workouts"
+              value={dashboardData.workouts}
+              note="this week"/>
+            <StatCard
+              label="Total reps"
+              value={dashboardData.totalReps}
+              note="this week"/>
+            <StatCard
+              label="Streak"
+              value={`${dashboardData.streak} days`}
+              note="keep going"/>
+            
           </View>
 
           <View style={styles.sectionHeading}>
@@ -85,13 +197,13 @@ export default function DashboardScreen() {
           </View>
 
           <View style={styles.activityCard}>
-            {weeklyActivity.map((item, index) => (
+            {dashboardData.weeklyActivity.map((item, index) => (
               <View key={`${item.day}-${index}`} style={styles.dayColumn}>
                 <View style={styles.barTrack}>
                   <View
                     style={[
                       styles.activityBar,
-                      { height: `${item.height}%` },
+                      { height: `${Math.min(item.height * 20, 100)}%` }
                     ]}
                   />
                 </View>
