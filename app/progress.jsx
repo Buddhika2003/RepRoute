@@ -1,5 +1,5 @@
-import { router } from 'expo-router'
-import { useMemo } from 'react'
+import { router, useFocusEffect } from 'expo-router'
+import { useCallback, useMemo, useState } from 'react'
 import {
   Pressable,
   SafeAreaView,
@@ -9,16 +9,85 @@ import {
   View
 } from 'react-native'
 import BottomNav from '../component/bottomNav'
+import { loadLocalData, STORAGE_KEYS } from '../storage/localStorage'
+
+
+function getLocalDateKey(value) {
+  const date = new Date(value)
+
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
 
 export default function ProgressScreen() {
+      const [entries, setEntries] = useState([])
+
+      useFocusEffect(
+        useCallback(() => {
+          let isActive = true
+
+          async function loadEntries() {
+          const savedEntries = await loadLocalData(
+              STORAGE_KEYS.workoutEntries,
+              []
+            )
+
+            if (isActive) {
+              setEntries(Array.isArray(savedEntries) ? savedEntries : [])
+            }
+            }
+
+          loadEntries()
+
+          return () => {
+            isActive = false
+          }
+        }, [])
+      )
+
     const summary = useMemo(() => {
-    return {
-        workouts: 0,
-        sets: 0,
-        volume: 0,
-        activeDays: 0,
-    }
-    }, [])
+        const now = new Date()
+        const weekStart = new Date(now)
+        const mondayOffset = (now.getDay() + 6) % 7
+
+        weekStart.setDate(now.getDate() - mondayOffset)
+        weekStart.setHours(0, 0, 0, 0)
+
+        const nextWeekStart = new Date(weekStart)
+        nextWeekStart.setDate(weekStart.getDate() + 7)
+
+        const thisWeekEntries = entries.filter((entry) => {
+          if (!entry.date) return false
+
+          const entryDate = new Date(entry.date)
+          return entryDate >= weekStart && entryDate < nextWeekStart
+        })
+
+        const activeDays = new Set(
+          thisWeekEntries.map((entry) => getLocalDateKey(entry.date))
+        ).size
+
+        return {
+          workouts: activeDays,
+          sets: thisWeekEntries.reduce(
+            (total, entry) => total + (Number(entry.sets) || 0),
+            0
+          ),
+          volume: thisWeekEntries.reduce(
+            (total, entry) =>
+              total +
+              (Number(entry.sets) || 0) *
+                (Number(entry.reps) || 0) *
+                (Number(entry.weight) || 0),
+                0
+          ),
+          activeDays,
+        }
+      }, [entries])
 
   return (
     <SafeAreaView style={styles.safeArea}>
