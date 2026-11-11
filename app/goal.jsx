@@ -1,5 +1,5 @@
 import { router } from 'expo-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Alert,
   Pressable,
@@ -11,6 +11,11 @@ import {
   View
 } from 'react-native'
 import BottomNav from '../component/bottomNav'
+import {
+  loadLocalData,
+  saveLocalData,
+  STORAGE_KEYS,
+} from '../storage/localStorage'
 
 const initialGoals = [
   {
@@ -26,6 +31,35 @@ export default function GoalsScreen() {
     const [title, setTitle] = useState('')
     const [target, setTarget] = useState('')
     const [goals, setGoals] = useState(initialGoals)
+    const [goalsLoaded, setGoalsLoaded] = useState(false)
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function loadGoals() {
+      const savedGoals = await loadLocalData(
+        STORAGE_KEYS.goals,
+        initialGoals
+      )
+
+      if (isMounted) {
+        setGoals(Array.isArray(savedGoals) ? savedGoals : initialGoals)
+        setGoalsLoaded(true)
+      }
+    }
+
+    loadGoals()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!goalsLoaded) return
+
+    saveLocalData(STORAGE_KEYS.goals, goals)
+    }, [goals, goalsLoaded])
 
     function addGoal() {
         const cleanTitle = title.trim()
