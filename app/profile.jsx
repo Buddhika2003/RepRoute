@@ -1,19 +1,20 @@
 import { router } from 'expo-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
-    Alert,
-    Platform,
-    Pressable,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Switch,
-    Text,
-    TextInput,
-    View
+  Alert,
+  Platform,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  View
 } from 'react-native'
 import BottomNav from '../component/bottomNav'
 import { useTheme } from '../context/ThemeContext'
+import { loadLocalData, saveLocalData, STORAGE_KEYS } from '../storage/localStorage'
 
 
 
@@ -23,21 +24,56 @@ export default function ProfileScreen() {
     
     const { theme, colors, toggleTheme } = useTheme()
 
-    function saveProfile() {
+    useEffect(() => {
+      let isMounted = true
+
+        async function loadProfile() {
+          const savedProfile = await loadLocalData(
+            STORAGE_KEYS.profile,
+            null
+          )
+
+          if (isMounted && savedProfile) {
+            if (typeof savedProfile.name === 'string') {
+              setName(savedProfile.name)
+              }
+
+            if (savedProfile.weeklyTarget !== undefined) {
+              setWeeklyTarget(String(savedProfile.weeklyTarget))
+            }
+          }
+          }
+
+      loadProfile()
+
+      return () => {
+          isMounted = false
+        }
+      }, [])
+
+    async function saveProfile() {
+        const cleanName = name.trim()
         const target = Number(weeklyTarget)
 
-        if (!name.trim()) {
-            showMessage('Name required', 'Enter your name to save your profile.')
-            return
+        if (!cleanName) {
+          showMessage('Name required', 'Enter your name to save your profile.')
+          return
         }
 
         if (!Number.isInteger(target) || target < 1 || target > 14) {
-            showMessage('Invalid target', 'Enter a weekly target from 1 to 14.')
-            return
+          showMessage('Invalid target', 'Enter a weekly target from 1 to 14.')
+          return
         }
 
-        showMessage('Profile updated', 'Your profile settings have been updated.')
-        }
+  await saveLocalData(STORAGE_KEYS.profile, {
+    name: cleanName,
+    weeklyTarget: String(target),
+  })
+
+  setName(cleanName)
+  setWeeklyTarget(String(target))
+  showMessage('Profile updated', 'Your profile settings have been updated.')
+}
 
 function showMessage(title, message) {
   if (Platform.OS === 'web') {
