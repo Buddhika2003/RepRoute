@@ -1,8 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import {
-    loadLocalData,
-    saveLocalData,
-    STORAGE_KEYS,
+  loadLocalData,
+  saveLocalData,
+  STORAGE_KEYS,
 } from '../storage/localStorage'
 
 const ThemeContext = createContext(null)
