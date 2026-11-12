@@ -67,12 +67,44 @@ export default function ProgressScreen() {
           return entryDate >= weekStart && entryDate < nextWeekStart
         })
 
+        const weeklyVolumes = Array.from({ length: 4 }, (_, index) => {
+        const start = new Date(weekStart)
+        start.setDate(weekStart.getDate() - (3 - index) * 7)
+
+        const end = new Date(start)
+        end.setDate(start.getDate() + 7)
+
+        const weekEntries = entries.filter((entry) => {
+          if (!entry.date) return false
+
+          const entryDate = new Date(entry.date)
+          return entryDate >= start && entryDate < end
+        })
+
+        const volume = weekEntries.reduce(
+          (total, entry) =>
+            total +
+            (Number(entry.sets) || 0) *
+            (Number(entry.reps) || 0) *
+            (Number(entry.weight) || 0),
+            0
+          )
+
+        return {
+          label: start.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+          }),
+          volume,
+        }
+      })
+
         const activeDays = new Set(
           thisWeekEntries.map((entry) => getLocalDateKey(entry.date))
         ).size
 
         return {
-          workouts: activeDays,
+          workouts: activeDays, weeklyVolumes,
           sets: thisWeekEntries.reduce(
             (total, entry) => total + (Number(entry.sets) || 0),
             0
@@ -158,8 +190,10 @@ const maxDailyExercises = Math.max(
         <Text style={styles.statLabel}>Sets completed</Text>
     </View>
     <View style={styles.statCard}>
-        <Text style={styles.statValue}>{summary.volume}</Text>
-        <Text style={styles.statLabel}>Volume (kg)</Text>
+      <Text style={styles.statValue}>
+        {Math.round(summary.volume).toLocaleString()} kg
+      </Text> 
+        <Text style={styles.statLabel}>Total lifted this week</Text>
     </View>
     <View style={styles.statCard}>
         <Text style={styles.statValue}>{summary.activeDays}</Text>
@@ -167,13 +201,38 @@ const maxDailyExercises = Math.max(
     </View>
     </View>
     
-    <View style={styles.sectionHeader}>
+    
+
+<View style={styles.sectionHeader}>
+  <Text style={styles.sectionTitle}>Weekly volume comparison</Text>
+</View>
+
+<View style={styles.activityCard}>
+  {summary.weeklyVolumes.map((week) => (
+    <View
+      key={week.label}
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 8,
+      }}>
+
+      <Text style={styles.chartDay}>Week starting {week.label}</Text>
+      <Text style={styles.statLabel}>
+        {Math.round(week.volume).toLocaleString()} kg
+      </Text>
+    </View>
+  ))}
+</View>
+
+<View style={styles.sectionHeader}>
   <Text style={styles.sectionTitle}>Weekly activity</Text>
   <Text style={styles.sectionNote}>THIS WEEK</Text>
 </View>
 
 <View style={styles.activityCard}>
   <View style={styles.chart}>
+    
     {weeklyActivity.map((item) => (
       <View key={item.day} style={styles.chartColumn}>
         <View style={styles.barTrack}>
