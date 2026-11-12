@@ -9,7 +9,7 @@ import {
   View
 } from 'react-native'
 import BottomNav from '../component/bottomNav'
-import { loadLocalData, saveLocalData, STORAGE_KEYS } from '../storage/localStorage'
+import { getProfileStorageKey, loadLocalData, saveLocalData, STORAGE_KEYS } from '../storage/localStorage'
 
 export default function WorkoutLogScreen() {
 
@@ -20,34 +20,52 @@ export default function WorkoutLogScreen() {
     const [message, setMessage] = useState('')
     const [entries, setEntries] = useState([])
     const [entriesLoaded, setEntriesLoaded] = useState(false)
+    const [activeProfileId, setActiveProfileId] = useState(null)
 
     useEffect(() => {
-        let isMounted = true
+  let isMounted = true
 
-        async function loadEntries() {
-          const savedEntries = await loadLocalData(
-            STORAGE_KEYS.workoutEntries,
-            []
-          )
+  async function loadEntries() {
+    const profileId = await loadLocalData(
+      STORAGE_KEYS.activeProfileId,
+      null
+    )
 
-          if (isMounted) {
-            setEntries(savedEntries)
-            setEntriesLoaded(true)
-          }
-        }
+    if (!profileId) {
+      if (isMounted) {
+        setEntries([])
+        setEntriesLoaded(true)
+      }
+      return
+    }
 
-        loadEntries()
+    const savedEntries = await loadLocalData(
+      getProfileStorageKey(STORAGE_KEYS.workoutEntries, profileId),
+      []
+    )
 
-        return () => {
-          isMounted = false
-        }
-      }, [])
+    if (isMounted) {
+      setActiveProfileId(profileId)
+      setEntries(Array.isArray(savedEntries) ? savedEntries : [])
+      setEntriesLoaded(true)
+    }
+  }
 
-      useEffect(() => {
-        if (!entriesLoaded) return
+  loadEntries()
 
-        saveLocalData(STORAGE_KEYS.workoutEntries, entries)
-      }, [entries, entriesLoaded])
+  return () => {
+    isMounted = false
+  }
+}, [])
+
+useEffect(() => {
+  if (!entriesLoaded || !activeProfileId) return
+
+  saveLocalData(
+    getProfileStorageKey(STORAGE_KEYS.workoutEntries, activeProfileId),
+    entries
+  )
+}, [entries, entriesLoaded, activeProfileId])
 
       function addExercise() {
         const setCount = Number(sets)

@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import BottomNav from '../component/bottomNav'
 import { useTheme } from '../context/ThemeContext'
 import {
+  getProfileStorageKey,
   loadLocalData,
   STORAGE_KEYS,
 } from '../storage/localStorage'
@@ -44,10 +45,20 @@ useFocusEffect(
     let isActive = true
 
     async function loadEntries() {
-      const savedEntries = await loadLocalData(
+      const activeProfileId = await loadLocalData(
+  STORAGE_KEYS.activeProfileId,
+  null
+)
+
+const savedEntries = activeProfileId
+  ? await loadLocalData(
+      getProfileStorageKey(
         STORAGE_KEYS.workoutEntries,
-        []
-      )
+        activeProfileId
+      ),
+      []
+    )
+  : []
 
       if (isActive) {
         setEntries(Array.isArray(savedEntries) ? savedEntries : [])

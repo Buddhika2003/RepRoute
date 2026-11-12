@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import BottomNav from '../component/bottomNav'
 import {
+  getProfileStorageKey,
   loadLocalData,
   saveLocalData,
   STORAGE_KEYS,
@@ -32,34 +33,52 @@ export default function GoalsScreen() {
     const [target, setTarget] = useState('')
     const [goals, setGoals] = useState(initialGoals)
     const [goalsLoaded, setGoalsLoaded] = useState(false)
+    const [activeProfileId, setActiveProfileId] = useState(null)
 
   useEffect(() => {
-    let isMounted = true
+  let isMounted = true
 
-    async function loadGoals() {
-      const savedGoals = await loadLocalData(
-        STORAGE_KEYS.goals,
-        initialGoals
-      )
+  async function loadGoals() {
+    const profileId = await loadLocalData(
+      STORAGE_KEYS.activeProfileId,
+      null
+    )
 
+    if (!profileId) {
       if (isMounted) {
-        setGoals(Array.isArray(savedGoals) ? savedGoals : initialGoals)
+        setGoals([])
         setGoalsLoaded(true)
       }
+      return
     }
 
-    loadGoals()
+    const savedGoals = await loadLocalData(
+      getProfileStorageKey(STORAGE_KEYS.goals, profileId),
+      []
+    )
 
-    return () => {
-      isMounted = false
+    if (isMounted) {
+      setActiveProfileId(profileId)
+      setGoals(Array.isArray(savedGoals) ? savedGoals : [])
+      setGoalsLoaded(true)
     }
-  }, [])
+  }
 
-  useEffect(() => {
-    if (!goalsLoaded) return
+  loadGoals()
 
-    saveLocalData(STORAGE_KEYS.goals, goals)
-    }, [goals, goalsLoaded])
+  return () => {
+    isMounted = false
+  }
+}, [])
+
+useEffect(() => {
+  if (!goalsLoaded || !activeProfileId) return
+
+  saveLocalData(
+    getProfileStorageKey(STORAGE_KEYS.goals, activeProfileId),
+    goals
+  )
+}, [goals, goalsLoaded, activeProfileId])
 
     function addGoal() {
         const cleanTitle = title.trim()

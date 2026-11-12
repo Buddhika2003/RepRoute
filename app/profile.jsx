@@ -14,42 +14,82 @@ import {
 } from 'react-native'
 import BottomNav from '../component/bottomNav'
 import { useTheme } from '../context/ThemeContext'
-import { loadLocalData, saveLocalData, STORAGE_KEYS } from '../storage/localStorage'
+import { getProfileStorageKey, loadLocalData, saveLocalData, STORAGE_KEYS, } from '../storage/localStorage'
 
 
 
 export default function ProfileScreen() {
     const [name, setName] = useState('Athlete')
     const [weeklyTarget, setWeeklyTarget] = useState('3')
+    const [profiles, setProfiles] = useState([])
+    const [activeProfileId, setActiveProfileId] = useState(null)
     
     const { theme, colors, toggleTheme } = useTheme()
 
     useEffect(() => {
-      let isMounted = true
+  let isMounted = true
 
-        async function loadProfile() {
-          const savedProfile = await loadLocalData(
-            STORAGE_KEYS.profile,
-            null
-          )
+  async function loadProfiles() {
+    const savedProfiles = await loadLocalData(STORAGE_KEYS.profiles, [])
+    const savedActiveId = await loadLocalData(
+      STORAGE_KEYS.activeProfileId,
+      null
+    )
 
-          if (isMounted && savedProfile) {
-            if (typeof savedProfile.name === 'string') {
-              setName(savedProfile.name)
-              }
+    let profileList = Array.isArray(savedProfiles) ? savedProfiles : []
+    let activeProfile
 
-            if (savedProfile.weeklyTarget !== undefined) {
-              setWeeklyTarget(String(savedProfile.weeklyTarget))
-            }
-          }
-          }
+    if (profileList.length === 0) {
+      const oldProfile = await loadLocalData(STORAGE_KEYS.profile, null)
 
-      loadProfile()
+      const firstProfile = {
+        id: `profile-${Date.now()}`,
+        name: oldProfile?.name || 'Athlete',
+        weeklyTarget: String(oldProfile?.weeklyTarget || 3),
+      }
 
-      return () => {
-          isMounted = false
-        }
-      }, [])
+      const oldEntries = await loadLocalData(
+        STORAGE_KEYS.workoutEntries,
+        []
+      )
+      const oldGoals = await loadLocalData(STORAGE_KEYS.goals, [])
+
+      await saveLocalData(
+        getProfileStorageKey(STORAGE_KEYS.workoutEntries, firstProfile.id),
+        oldEntries
+      )
+      await saveLocalData(
+        getProfileStorageKey(STORAGE_KEYS.goals, firstProfile.id),
+        oldGoals
+      )
+
+      profileList = [firstProfile]
+      activeProfile = firstProfile
+
+      await saveLocalData(STORAGE_KEYS.profiles, profileList)
+      await saveLocalData(STORAGE_KEYS.activeProfileId, firstProfile.id)
+    } else {
+      activeProfile =
+        profileList.find((profile) => profile.id === savedActiveId) ||
+        profileList[0]
+
+      await saveLocalData(STORAGE_KEYS.activeProfileId, activeProfile.id)
+    }
+
+    if (isMounted) {
+      setProfiles(profileList)
+      setActiveProfileId(activeProfile.id)
+      setName(activeProfile.name)
+      setWeeklyTarget(String(activeProfile.weeklyTarget))
+    }
+  }
+
+  loadProfiles()
+
+  return () => {
+    isMounted = false
+  }
+}, [])
 
     async function saveProfile() {
         const cleanName = name.trim()
@@ -65,14 +105,55 @@ export default function ProfileScreen() {
           return
         }
 
-  await saveLocalData(STORAGE_KEYS.profile, {
-    name: cleanName,
-    weeklyTarget: String(target),
-  })
+  if (!activeProfileId) {
+  showMessage('Please wait', 'The profile is still loading.')
+  return
+}
 
-  setName(cleanName)
-  setWeeklyTarget(String(target))
-  showMessage('Profile updated', 'Your profile settings have been updated.')
+const updatedProfiles = profiles.map((profile) =>
+  profile.id === activeProfileId
+    ? {
+        ...profile,
+        name: cleanName,
+        weeklyTarget: String(target),
+      }
+    : profile
+)
+
+setProfiles(updatedProfiles)
+
+await saveLocalData(STORAGE_KEYS.profiles, updatedProfiles)
+
+    setName(cleanName)
+    setWeeklyTarget(String(target))
+
+    showMessage('Profile updated', 'Your profile settings have been updated.')
+    }
+
+    async function switchProfile(profile) {
+  setActiveProfileId(profile.id)
+  setName(profile.name)
+  setWeeklyTarget(String(profile.weeklyTarget))
+
+  await saveLocalData(STORAGE_KEYS.activeProfileId, profile.id)
+}
+
+async function addProfile() {
+  const newProfile = {
+    id: `profile-${Date.now()}`,
+    name: `Athlete ${profiles.length + 1}`,
+    weeklyTarget: '3',
+  }
+
+  const updatedProfiles = [...profiles, newProfile]
+
+  setProfiles(updatedProfiles)
+  setActiveProfileId(newProfile.id)
+  setName(newProfile.name)
+  setWeeklyTarget(newProfile.weeklyTarget)
+
+  await saveLocalData(STORAGE_KEYS.profiles, updatedProfiles)
+  await saveLocalData(STORAGE_KEYS.activeProfileId, newProfile.id)
 }
 
 function showMessage(title, message) {
@@ -126,6 +207,74 @@ function openScreen(route) {
                 RepRoute member</Text>
             
             </View>
+
+            <View
+  style={[
+    styles.formCard,
+    {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      marginBottom: 16,
+    },
+  ]}
+>
+  <Text style={[styles.sectionTitle, { color: colors.text }]}>
+    Profiles on this device
+  </Text>
+
+  {profiles.map((profile) => {
+    const isActive = profile.id === activeProfileId
+
+    return (
+      <Pressable
+        key={profile.id}
+        onPress={() => switchProfile(profile)}
+        style={({ pressed }) => [
+          styles.linkCard,
+          {
+            backgroundColor: colors.surface,
+            borderColor: isActive ? colors.primary : colors.border,
+            opacity: pressed ? 0.75 : 1,
+          },
+        ]}
+      >
+        <Text style={[styles.linkTitle, { color: colors.text }]}>
+          {profile.name}
+        </Text>
+
+        <Text
+          style={{
+            color: colors.primary,
+            fontSize: 11,
+            fontWeight: '800',
+          }}
+        >
+          {isActive ? 'ACTIVE' : 'SWITCH'}
+        </Text>
+      </Pressable>
+    )
+  })}
+
+  <Pressable
+    onPress={addProfile}
+    style={({ pressed }) => [
+      styles.saveButton,
+      {
+        backgroundColor: colors.primary,
+        opacity: pressed ? 0.75 : 1,
+      },
+    ]}
+  >
+    <Text
+      style={[
+        styles.saveButtonText,
+        { color: theme === 'dark' ? '#111B16' : '#FFFFFF' },
+      ]}
+    >
+      + Add another profile
+    </Text>
+  </Pressable>
+</View>
 
         <View  style={[
             styles.formCard,

@@ -9,7 +9,7 @@ import {
   View
 } from 'react-native'
 import BottomNav from '../component/bottomNav'
-import { loadLocalData, STORAGE_KEYS } from '../storage/localStorage'
+import { getProfileStorageKey, loadLocalData, STORAGE_KEYS, } from '../storage/localStorage'
 
 
 function getLocalDateKey(value) {
@@ -31,10 +31,21 @@ export default function ProgressScreen() {
           let isActive = true
 
           async function loadEntries() {
-          const savedEntries = await loadLocalData(
-              STORAGE_KEYS.workoutEntries,
-              []
-            )
+
+          const activeProfileId = await loadLocalData(
+  STORAGE_KEYS.activeProfileId,
+  null
+)
+
+const savedEntries = activeProfileId
+  ? await loadLocalData(
+      getProfileStorageKey(
+        STORAGE_KEYS.workoutEntries,
+        activeProfileId
+      ),
+      []
+    )
+  : []
 
             if (isActive) {
               setEntries(Array.isArray(savedEntries) ? savedEntries : [])
