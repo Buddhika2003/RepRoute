@@ -35,3 +35,18 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/Buddhika2003/RepRoute.git
+```
+
+Install the dependencies:
+
+    npm install
+
+Start the app:
+
+    npx expo start
+
+To run on a specific platform:
+
+    npm run android
+    npm run ios
+    npm run web
