@@ -1,6 +1,7 @@
 import { router } from 'expo-router'
 import { useMemo, useState } from 'react'
 import {
+  Modal,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -73,6 +74,7 @@ export default function ExercisesScreen() {
 
 const [search, setSearch] = useState('')
 const [selectedFilter, setSelectedFilter] = useState('All')
+const [selectedExercise, setSelectedExercise] = useState(null)
 
 const filteredExercises = useMemo(() => {
   const query = search.trim().toLowerCase()
@@ -144,7 +146,14 @@ const filteredExercises = useMemo(() => {
         </Text>
 
         {filteredExercises.map((exercise) => (
-        <View key={exercise.id} style={styles.exerciseCard}>
+        <Pressable
+          key={exercise.id}
+          onPress={() => setSelectedExercise(exercise)}
+          style={({ pressed }) => [
+          styles.exerciseCard,
+          pressed && { opacity: 0.75 },
+          ]}>
+
             <View style={styles.levelBadge}>
             <Text style={styles.levelText}>{exercise.level}</Text>
         </View>
@@ -153,10 +162,61 @@ const filteredExercises = useMemo(() => {
         <Text style={styles.exerciseMeta}>
             {exercise.muscle} · {exercise.equipment}
         </Text>
-    </View>
+    </Pressable>
 ))}
       </ScrollView>
-      <BottomNav/>
+
+<Modal
+  visible={selectedExercise !== null}
+  transparent
+  animationType="fade"
+  onRequestClose={() => setSelectedExercise(null)}
+>
+  <View style={styles.modalOverlay}>
+    <View style={styles.modalCard}>
+      {selectedExercise && (
+        <>
+          <View style={styles.modalHeader}>
+            <Text style={styles.levelText}>
+              {selectedExercise.level}
+            </Text>
+
+            <Pressable onPress={() => setSelectedExercise(null)}>
+              <Text style={styles.modalCloseIcon}>×</Text>
+            </Pressable>
+          </View>
+
+          <Text style={styles.modalTitle}>
+            {selectedExercise.name}
+          </Text>
+
+          <Text style={styles.modalMeta}>
+            Muscle group: {selectedExercise.muscle}
+          </Text>
+
+          <Text style={styles.modalMeta}>
+            Equipment: {selectedExercise.equipment}
+          </Text>
+
+          <Text style={styles.modalDescriptionTitle}>Description</Text>
+
+          <Text style={styles.modalDescription}>
+            {selectedExercise.description}
+          </Text>
+
+          <Pressable
+            onPress={() => setSelectedExercise(null)}
+            style={styles.modalCloseButton}
+          >
+            <Text style={styles.modalCloseButtonText}>Close</Text>
+          </Pressable>
+        </>
+      )}
+    </View>
+  </View>
+</Modal>
+
+<BottomNav />
     </SafeAreaView>
   )
 }
@@ -271,5 +331,67 @@ backButtonText: {
   color: '#402f9b',
   fontSize: 14,
   fontWeight: '700',
+},
+modalOverlay: {
+  flex: 1,
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  justifyContent: 'center',
+  padding: 24,
+},
+modalCard: {
+  alignSelf: 'center',
+  backgroundColor: '#FFFFFF',
+  borderColor: '#E8EBF0',
+  borderRadius: 20,
+  borderWidth: 1,
+  maxWidth: 480,
+  padding: 20,
+  width: '100%',
+},
+modalHeader: {
+  alignItems: 'center',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+},
+modalCloseIcon: {
+  color: '#667085',
+  fontSize: 28,
+  fontWeight: '600',
+  paddingHorizontal: 6,
+},
+modalTitle: {
+  color: '#172B4D',
+  fontSize: 23,
+  fontWeight: '800',
+  marginTop: 16,
+},
+modalMeta: {
+  color: '#667085',
+  fontSize: 14,
+  marginTop: 10,
+},
+modalDescriptionTitle: {
+  color: '#172B4D',
+  fontSize: 13,
+  fontWeight: '800',
+  marginTop: 20,
+},
+modalDescription: {
+  color: '#667085',
+  fontSize: 14,
+  lineHeight: 21,
+  marginTop: 7,
+},
+modalCloseButton: {
+  alignItems: 'center',
+  backgroundColor: '#172B4D',
+  borderRadius: 12,
+  marginTop: 22,
+  paddingVertical: 13,
+},
+modalCloseButtonText: {
+  color: '#FFFFFF',
+  fontSize: 14,
+  fontWeight: '800',
 },
 })
